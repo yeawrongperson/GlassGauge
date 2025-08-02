@@ -56,15 +56,29 @@ final class AppState: ObservableObject {
         push(fans, value: s.fans)
         push(power, value: s.power)
 
-        cpu.secondary = "\(Int(s.cpuTemp))°C • \(temperatureBadge(for: s.cpuTemp))"
-        cpu.accent = accentColor(for: s.cpuTemp)
+        if s.cpuTemp > 0 {
+            cpu.secondary = "\(Int(s.cpuTemp))°C • \(temperatureBadge(for: s.cpuTemp))"
+            cpu.accent = accentColor(for: s.cpuTemp)
+        } else {
+            cpu.secondary = "Sensor Not Found"
+            cpu.accent = .gray
+        }
 
-        gpu.secondary = "\(Int(s.gpuTemp))°C • \(temperatureBadge(for: s.gpuTemp))"
-        gpu.accent = accentColor(for: s.gpuTemp)
+        if s.gpuTemp > 0 {
+            gpu.secondary = "\(Int(s.gpuTemp))°C • \(temperatureBadge(for: s.gpuTemp))"
+            gpu.accent = accentColor(for: s.gpuTemp)
+        } else {
+            gpu.secondary = "Sensor Not Found"
+            gpu.accent = .gray
+        }
 
-        disk.secondary = "\(Int(s.diskTemp))°C • \(temperatureBadge(for: s.diskTemp))"
-        disk.accent = accentColor(for: s.diskTemp)
-
+        if s.diskTemp > 0 {
+            disk.secondary = "\(Int(s.diskTemp))°C • \(temperatureBadge(for: s.diskTemp))"
+            disk.accent = accentColor(for: s.diskTemp)
+        } else {
+            disk.secondary = "Sensor Not Found"
+            disk.accent = .gray
+        }
 
         battery.secondary = "Cycle \(s.batteryCycle) • In \(String(format: "%.1f", s.powerIn))W / Out \(String(format: "%.1f", s.powerOut))W"
     }
@@ -91,6 +105,23 @@ final class AppState: ObservableObject {
     }
 
     private func healthBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
         switch temp {
         case ..<70: return "ok"
         case ..<85: return "elevated"

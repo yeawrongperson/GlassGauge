@@ -26,9 +26,6 @@ private let kIOBlockStorageDriverStatisticsKey = "Statistics"
 private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes (Read)"
 private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
 
-// Missing IOKit constants that need to be defined
-private let kIOPSCycleCountKey = "CycleCount"
-
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
     private var previousDisk: (read: UInt64, write: UInt64) = (0,0)
@@ -43,9 +40,9 @@ final class SystemMonitor {
         let gpu = gpuUsage()
         let fan = fanSpeed()
         let power = battery.powerOut > 0 ? battery.powerOut : battery.powerIn
-        let cpuT = temperature(for: "cpu")
-        let gpuT = temperature(for: "gpu")
-        let diskT = temperature(for: "ssd")
+        let cpuT = temperature(for: ["cpu"])
+        let gpuT = temperature(for: ["gpu"])
+        let diskT = temperature(for: ["ssd", "smart", "disk", "drive"])
         return SystemSample(cpu: cpu,
                             gpu: gpu,
                             memory: mem,
@@ -161,9 +158,9 @@ final class SystemMonitor {
         }
         let level = Double(current) / Double(max) * 100.0
         let cycle = info[kIOPSCycleCountKey] as? Int ?? 0
-        let amps = info[kIOPSCurrentKey] as? Int ?? 0
-        let voltage = info[kIOPSVoltageKey] as? Int ?? 0
-        let watts = (Double(abs(amps)) * Double(voltage)) / 1_000_000.0
+        let amps = info[kIOPSCurrentKey] as? Double ?? 0
+        let voltage = info[kIOPSVoltageKey] as? Double ?? 0
+        let watts = abs(amps) * voltage / 1_000_000.0
         let inW = amps > 0 ? watts : 0
         let outW = amps < 0 ? watts : 0
         return (level, cycle, inW, outW)
@@ -207,7 +204,11 @@ final class SystemMonitor {
         return total / count
     }
 
-    private func temperature(for match: String) -> Double {
+    private func temperature(for matches: [String]) -> Double {
+#if arch(arm64)
+        // Apple Silicon doesn't expose these sensors
+        return 0
+#else
         let matching = IOServiceMatching("IOHWSensor")
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
@@ -219,11 +220,12 @@ final class SystemMonitor {
             if let type = IORegistryEntryCreateCFProperty(service, "type" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
                type == "temperature",
                let location = IORegistryEntryCreateCFProperty(service, "location" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
-               location.lowercased().contains(match.lowercased()),
+               matches.contains(where: { location.lowercased().contains($0) }),
                let value = IORegistryEntryCreateCFProperty(service, "current-value" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? NSNumber {
                 return value.doubleValue / 100.0
             }
         }
         return 0
+#endif
     }
 }
