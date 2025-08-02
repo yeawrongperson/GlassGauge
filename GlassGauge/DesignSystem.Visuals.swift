@@ -21,10 +21,11 @@ struct VisualEffectView: NSViewRepresentable {
 
 // Basic glass card container
 struct GlassCard<Content: View>: View {
+    var emphasized: Bool = true
     let content: () -> Content
     var body: some View {
         ZStack {
-            VisualEffectView(material: .hudWindow)
+            VisualEffectView(material: .hudWindow, emphasized: emphasized)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(.white.opacity(0.25), lineWidth: 1)

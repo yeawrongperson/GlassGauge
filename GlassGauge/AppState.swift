@@ -7,6 +7,7 @@ final class AppState: ObservableObject {
     @Published var selection: SectionID = .overview
     @Published var range: TimeRange = .now
     @Published var searchText: String = ""
+    @Published var reduceMotion: Bool = false
 
     // Core metrics
     @Published var cpu = MetricModel("CPU", icon: "cpu", unit: "%")
@@ -21,18 +22,13 @@ final class AppState: ObservableObject {
     @Published var pinnedIDs: Set<UUID> = []
 
     private var timer: Timer?
+    private let monitor = SystemMonitor()
 
     init() {
-        // Seed initial values
-        cpu.primaryValue = 32; gpu.primaryValue = 18
-        memory.primaryValue = 19.9; disk.primaryValue = 118
-        network.primaryValue = 145; battery.primaryValue = 88
-        fans.primaryValue = 1431; power.primaryValue = -6.7
-
-        startMockPolling()
+        startPolling()
     }
 
-    func startMockPolling() {
+    func startPolling() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.tick()
@@ -49,20 +45,61 @@ final class AppState: ObservableObject {
     }
 
     private func tick() {
-        // Simple noise generator for mock data
-        func n(_ base: Double, _ spread: Double) -> Double { max(0, base + Double.random(in: -spread...spread)) }
+        let s = monitor.sample()
+        push(cpu, value: s.cpu)
+        push(gpu, value: s.gpu)
+        push(memory, value: s.memory)
+        push(disk, value: s.disk)
+        push(network, value: s.network)
+        push(battery, value: s.battery)
+        push(fans, value: s.fans)
+        push(power, value: s.power)
 
-        push(cpu, value: min(100, n(cpu.primaryValue, 5)))
-        push(gpu, value: min(100, n(gpu.primaryValue, 8)))
-        push(memory, value: max(0, n(memory.primaryValue, 0.1)))
-        push(disk, value: max(0, n(disk.primaryValue, 20)))
-        push(network, value: max(0, n(network.primaryValue, 30)))
-        push(battery, value: min(100, max(0, n(battery.primaryValue + (Bool.random() ? -0.1: 0.0), 0.2))))
-        push(fans, value: max(0, n(fans.primaryValue, 40)))
-        push(power, value: n(power.primaryValue, 0.6))
+        if s.cpuTemp > 0 {
+            cpu.secondary = "\(Int(s.cpuTemp))°C • \(temperatureBadge(for: s.cpuTemp))"
+            cpu.accent = accentColor(for: s.cpuTemp)
+        } else {
+            cpu.secondary = "Sensor Not Found"
+            cpu.accent = .gray
+        }
+
+        if s.gpuTemp > 0 {
+            gpu.secondary = "\(Int(s.gpuTemp))°C • \(temperatureBadge(for: s.gpuTemp))"
+            gpu.accent = accentColor(for: s.gpuTemp)
+        } else {
+            gpu.secondary = "Sensor Not Found"
+            gpu.accent = .gray
+        }
+
+        if s.diskTemp > 0 {
+            disk.secondary = "\(Int(s.diskTemp))°C • \(temperatureBadge(for: s.diskTemp))"
+            disk.accent = accentColor(for: s.diskTemp)
+        } else {
+            disk.secondary = "Sensor Not Found"
+            disk.accent = .gray
+        }
+
+        battery.secondary = "Cycle \(s.batteryCycle) • In \(String(format: "%.1f", s.powerIn))W / Out \(String(format: "%.1f", s.powerOut))W"
     }
 
     var allMetrics: [MetricModel] {
         [cpu, gpu, memory, disk, network, battery, fans, power]
+    }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
     }
 }
