@@ -17,22 +17,18 @@ final class AppState: ObservableObject {
     @Published var battery = MetricModel("Battery", icon: "battery.100", unit: "%")
     @Published var fans = MetricModel("Fans", icon: "fanblades", unit: "RPM")
     @Published var power = MetricModel("Power", icon: "bolt.fill", unit: "W")
+    @Published var temps = MetricModel("Temps", icon: "thermometer", unit: "°C")
 
     @Published var pinnedIDs: Set<UUID> = []
 
     private var timer: Timer?
+    private let monitor = SystemMonitor()
 
     init() {
-        // Seed initial values
-        cpu.primaryValue = 32; gpu.primaryValue = 18
-        memory.primaryValue = 19.9; disk.primaryValue = 118
-        network.primaryValue = 145; battery.primaryValue = 88
-        fans.primaryValue = 1431; power.primaryValue = -6.7
-
-        startMockPolling()
+        startPolling()
     }
 
-    func startMockPolling() {
+    func startPolling() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.tick()
@@ -49,20 +45,19 @@ final class AppState: ObservableObject {
     }
 
     private func tick() {
-        // Simple noise generator for mock data
-        func n(_ base: Double, _ spread: Double) -> Double { max(0, base + Double.random(in: -spread...spread)) }
-
-        push(cpu, value: min(100, n(cpu.primaryValue, 5)))
-        push(gpu, value: min(100, n(gpu.primaryValue, 8)))
-        push(memory, value: max(0, n(memory.primaryValue, 0.1)))
-        push(disk, value: max(0, n(disk.primaryValue, 20)))
-        push(network, value: max(0, n(network.primaryValue, 30)))
-        push(battery, value: min(100, max(0, n(battery.primaryValue + (Bool.random() ? -0.1: 0.0), 0.2))))
-        push(fans, value: max(0, n(fans.primaryValue, 40)))
-        push(power, value: n(power.primaryValue, 0.6))
+        let s = monitor.sample()
+        push(cpu, value: s.cpu)
+        push(gpu, value: s.gpu)
+        push(memory, value: s.memory)
+        push(disk, value: s.disk)
+        push(network, value: s.network)
+        push(battery, value: s.battery)
+        push(fans, value: s.fans)
+        push(power, value: s.power)
+        push(temps, value: s.temps)
     }
 
     var allMetrics: [MetricModel] {
-        [cpu, gpu, memory, disk, network, battery, fans, power]
+        [cpu, gpu, memory, disk, network, battery, fans, power, temps]
     }
 }
