@@ -14,7 +14,12 @@ struct SystemSample {
     var battery: Double
     var fans: Double
     var power: Double
-    var temps: Double
+    var cpuTemp: Double
+    var gpuTemp: Double
+    var diskTemp: Double
+    var batteryCycle: Int
+    var powerIn: Double
+    var powerOut: Double
 }
 
 private let kIOBlockStorageDriverStatisticsKey = "Statistics"
@@ -30,20 +35,27 @@ final class SystemMonitor {
         let mem = memoryUsage()
         let disk = diskActivity()
         let net = networkActivity()
-        let battery = batteryLevel()
+        let battery = batteryInfo()
         let gpu = gpuUsage()
         let fan = fanSpeed()
-        let power = powerUsage()
-        let temp = temperature()
+        let power = battery.powerOut > 0 ? battery.powerOut : battery.powerIn
+        let cpuT = temperature(for: "cpu")
+        let gpuT = temperature(for: "gpu")
+        let diskT = temperature(for: "ssd")
         return SystemSample(cpu: cpu,
                             gpu: gpu,
                             memory: mem,
                             disk: disk,
                             network: net,
-                            battery: battery,
+                            battery: battery.level,
                             fans: fan,
                             power: power,
-                            temps: temp)
+                            cpuTemp: cpuT,
+                            gpuTemp: gpuT,
+                            diskTemp: diskT,
+                            batteryCycle: battery.cycle,
+                            powerIn: battery.powerIn,
+                            powerOut: battery.powerOut)
     }
 
     private func cpuUsage() -> Double {
@@ -134,17 +146,25 @@ final class SystemMonitor {
         return Double(deltaRx + deltaTx) / 1024.0
     }
 
-    private func batteryLevel() -> Double {
+    private func batteryInfo() -> (level: Double, cycle: Int, powerIn: Double, powerOut: Double) {
         guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
               let sources = IOPSCopyPowerSourcesList(snapshot)?.takeRetainedValue() as? [CFTypeRef],
               !sources.isEmpty,
               let info = IOPSGetPowerSourceDescription(snapshot, sources[0]).takeUnretainedValue() as? [String: Any],
               let current = info[kIOPSCurrentCapacityKey] as? Int,
               let max = info[kIOPSMaxCapacityKey] as? Int else {
-            return 0
+            return (0,0,0,0)
         }
-        return Double(current) / Double(max) * 100.0
+        let level = Double(current) / Double(max) * 100.0
+        let cycle = info[kIOPSCycleCountKey] as? Int ?? 0
+        let amps = info[kIOPSCurrentKey] as? Int ?? 0
+        let voltage = info[kIOPSVoltageKey] as? Int ?? 0
+        let watts = (Double(abs(amps)) * Double(voltage)) / 1_000_000.0
+        let inW = amps > 0 ? watts : 0
+        let outW = amps < 0 ? watts : 0
+        return (level, cycle, inW, outW)
     }
+
     private func gpuUsage() -> Double {
         let matching = IOServiceMatching("IOAccelerator")
         var iterator: io_iterator_t = 0
@@ -183,19 +203,7 @@ final class SystemMonitor {
         return total / count
     }
 
-    private func powerUsage() -> Double {
-        guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
-              let sources = IOPSCopyPowerSourcesList(snapshot)?.takeRetainedValue() as? [CFTypeRef],
-              !sources.isEmpty,
-              let info = IOPSGetPowerSourceDescription(snapshot, sources[0]).takeUnretainedValue() as? [String: Any],
-              let current = info[kIOPSCurrentKey] as? Int,
-              let voltage = info[kIOPSVoltageKey] as? Int else {
-            return 0
-        }
-        let watts = (Double(current) * Double(voltage)) / 1_000_000.0
-        return watts
-    }
-    private func temperature() -> Double {
+    private func temperature(for match: String) -> Double {
         let matching = IOServiceMatching("IOHWSensor")
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
@@ -207,7 +215,7 @@ final class SystemMonitor {
             if let type = IORegistryEntryCreateCFProperty(service, "type" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
                type == "temperature",
                let location = IORegistryEntryCreateCFProperty(service, "location" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
-               location.lowercased().contains("cpu"),
+               location.lowercased().contains(match.lowercased()),
                let value = IORegistryEntryCreateCFProperty(service, "current-value" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? NSNumber {
                 return value.doubleValue / 100.0
             }
