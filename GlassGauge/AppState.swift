@@ -18,6 +18,7 @@ final class AppState: ObservableObject {
     @Published var battery = MetricModel("Battery", icon: "battery.100", unit: "%")
     @Published var fans = MetricModel("Fans", icon: "fanblades", unit: "RPM")
     @Published var power = MetricModel("Power", icon: "bolt.fill", unit: "W")
+    @Published var temps = MetricModel("Temps", icon: "thermometer", unit: "°C")
 
     @Published var pinnedIDs: Set<UUID> = []
 
@@ -54,7 +55,6 @@ final class AppState: ObservableObject {
         push(battery, value: s.battery)
         push(fans, value: s.fans)
         push(power, value: s.power)
-
         cpu.secondary = "\(Int(s.cpuTemp))°C • \(badge(for: s.cpuTemp))"
         cpu.accent = color(for: s.cpuTemp)
 
@@ -68,7 +68,7 @@ final class AppState: ObservableObject {
     }
 
     var allMetrics: [MetricModel] {
-        [cpu, gpu, memory, disk, network, battery, fans, power]
+        [cpu, gpu, memory, disk, network, battery, fans, power, temps]
     }
 
     private func color(for temp: Double) -> Color {
