@@ -5,7 +5,7 @@ import Combine
 
 enum SectionID: Hashable {
     case overview, sensors, alerts, logs
-    case cpu, gpu, memory, disks, network, battery, fans, power
+    case cpu, gpu, memory, disks, network, battery, fans, power, temps
     case settings
 }
 
