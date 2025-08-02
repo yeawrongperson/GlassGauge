@@ -1,6 +1,7 @@
 import Foundation
 import IOKit
 import IOKit.ps
+import IOKit.storage
 import Darwin
 
 struct SystemSample {
@@ -13,6 +14,10 @@ struct SystemSample {
     var fans: Double
     var power: Double
 }
+
+private let kIOBlockStorageDriverStatisticsKey = "Statistics"
+private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes Read"
+private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes Written"
 
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
