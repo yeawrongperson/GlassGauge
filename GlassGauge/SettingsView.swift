@@ -4,7 +4,6 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var state: AppState
     @State private var launchAtLogin = false
-    @State private var reduceMotion = false
     @State private var profile: SamplingProfile = .balanced
 
     var body: some View {
@@ -15,7 +14,7 @@ struct SettingsView: View {
                 }
             }
             Toggle("Launch at login", isOn: $launchAtLogin)
-            Toggle("Reduce motion", isOn: $reduceMotion)
+            Toggle("Reduce motion", isOn: $state.reduceMotion)
             Picker("Default Range", selection: $state.range) {
                 Text("Now").tag(TimeRange.now)
                 Text("1h").tag(TimeRange.hour1)
