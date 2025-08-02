@@ -20,7 +20,6 @@ struct SystemSample {
 private let kIOBlockStorageDriverStatisticsKey = "Statistics"
 private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes (Read)"
 private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
-
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
     private var previousDisk: (read: UInt64, write: UInt64) = (0,0)
@@ -146,7 +145,6 @@ final class SystemMonitor {
         }
         return Double(current) / Double(max) * 100.0
     }
-
     private func gpuUsage() -> Double {
         let matching = IOServiceMatching("IOAccelerator")
         var iterator: io_iterator_t = 0
@@ -197,7 +195,6 @@ final class SystemMonitor {
         let watts = (Double(current) * Double(voltage)) / 1_000_000.0
         return watts
     }
-
     private func temperature() -> Double {
         let matching = IOServiceMatching("IOHWSensor")
         var iterator: io_iterator_t = 0
