@@ -26,6 +26,9 @@ private let kIOBlockStorageDriverStatisticsKey = "Statistics"
 private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes (Read)"
 private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
 
+// Missing IOKit constants that need to be defined
+private let kIOPSCycleCountKey = "CycleCount"
+
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
     private var previousDisk: (read: UInt64, write: UInt64) = (0,0)
