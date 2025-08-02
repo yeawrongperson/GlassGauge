@@ -14,6 +14,7 @@ struct SystemSample {
     var battery: Double
     var fans: Double
     var power: Double
+    var temps: Double
 }
 
 private let kIOBlockStorageDriverStatisticsKey = "Statistics"
@@ -33,6 +34,7 @@ final class SystemMonitor {
         let gpu = gpuUsage()
         let fan = fanSpeed()
         let power = powerUsage()
+        let temp = temperature()
         return SystemSample(cpu: cpu,
                             gpu: gpu,
                             memory: mem,
@@ -40,7 +42,8 @@ final class SystemMonitor {
                             network: net,
                             battery: battery,
                             fans: fan,
-                            power: power)
+                            power: power,
+                            temps: temp)
     }
 
     private func cpuUsage() -> Double {
@@ -191,5 +194,24 @@ final class SystemMonitor {
         }
         let watts = (Double(current) * Double(voltage)) / 1_000_000.0
         return watts
+    }
+    private func temperature() -> Double {
+        let matching = IOServiceMatching("IOHWSensor")
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
+            return 0
+        }
+        defer { IOObjectRelease(iterator) }
+        while case let service = IOIteratorNext(iterator), service != 0 {
+            defer { IOObjectRelease(service) }
+            if let type = IORegistryEntryCreateCFProperty(service, "type" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
+               type == "temperature",
+               let location = IORegistryEntryCreateCFProperty(service, "location" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
+               location.lowercased().contains("cpu"),
+               let value = IORegistryEntryCreateCFProperty(service, "current-value" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? NSNumber {
+                return value.doubleValue / 100.0
+            }
+        }
+        return 0
     }
 }
