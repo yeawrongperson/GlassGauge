@@ -25,6 +25,10 @@ struct SystemSample {
 private let kIOBlockStorageDriverStatisticsKey = "Statistics"
 private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes (Read)"
 private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
+// Not all Swift toolchains surface the cycle count key from IOPowerSources,
+// so declare the string constant manually to avoid build failures.
+private let kIOPSCycleCountKey = "Cycle Count"
+
 
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
