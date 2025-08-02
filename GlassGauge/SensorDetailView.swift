@@ -3,6 +3,7 @@ import SwiftUI
 import Charts
 
 struct SensorDetailView: View {
+    @EnvironmentObject var state: AppState
     @ObservedObject var metric: MetricModel
 
     var body: some View {
@@ -25,7 +26,8 @@ struct SensorDetailView: View {
                 AxisMarks(values: .automatic(desiredCount: 4))
             }
             .frame(minHeight: 240)
-            .glassBackground()
+            .glassBackground(emphasized: !state.reduceMotion)
+            .animation(state.reduceMotion ? nil : .default, value: metric.samples)
 
             Spacer()
         }
@@ -35,10 +37,10 @@ struct SensorDetailView: View {
 }
 
 extension View {
-    func glassBackground() -> some View {
+    func glassBackground(emphasized: Bool = true) -> some View {
         self
             .padding()
-            .background(VisualEffectView(material: .hudWindow))
+            .background(VisualEffectView(material: .hudWindow, emphasized: emphasized))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
