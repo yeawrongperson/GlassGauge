@@ -55,13 +55,15 @@ final class AppState: ObservableObject {
         push(battery, value: s.battery)
         push(fans, value: s.fans)
         push(power, value: s.power)
-        cpu.secondary = "\(Int(s.cpuTemp))°C • \(badge(for: s.cpuTemp))"
+
+        cpu.secondary = "\(Int(s.cpuTemp))°C • \(healthBadge(for: s.cpuTemp))"
         cpu.accent = color(for: s.cpuTemp)
 
-        gpu.secondary = "\(Int(s.gpuTemp))°C • \(badge(for: s.gpuTemp))"
+        gpu.secondary = "\(Int(s.gpuTemp))°C • \(healthBadge(for: s.gpuTemp))"
         gpu.accent = color(for: s.gpuTemp)
 
-        disk.secondary = "\(Int(s.diskTemp))°C • \(badge(for: s.diskTemp))"
+        disk.secondary = "\(Int(s.diskTemp))°C • \(healthBadge(for: s.diskTemp))"
+      
         disk.accent = color(for: s.diskTemp)
 
         battery.secondary = "Cycle \(s.batteryCycle) • In \(String(format: "%.1f", s.powerIn))W / Out \(String(format: "%.1f", s.powerOut))W"
@@ -98,6 +100,23 @@ final class AppState: ObservableObject {
     }
 
     private func badge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func color(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func healthBadge(for temp: Double) -> String {
         switch temp {
         case ..<70: return "ok"
         case ..<85: return "elevated"
