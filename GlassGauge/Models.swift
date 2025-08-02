@@ -21,7 +21,7 @@ enum TimeRange: String, CaseIterable, Identifiable {
     }
 }
 
-struct SamplePoint: Identifiable {
+struct SamplePoint: Identifiable, Equatable {
     let id = UUID()
     let t: Date
     let v: Double
