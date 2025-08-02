@@ -2,6 +2,7 @@ import Foundation
 import IOKit
 import IOKit.ps
 import IOKit.storage
+import IOKit.graphics
 import Darwin
 
 struct SystemSample {
@@ -16,9 +17,8 @@ struct SystemSample {
 }
 
 private let kIOBlockStorageDriverStatisticsKey = "Statistics"
-private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes Read"
-private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes Written"
-
+private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes (Read)"
+private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
     private var previousDisk: (read: UInt64, write: UInt64) = (0,0)
@@ -30,15 +30,17 @@ final class SystemMonitor {
         let disk = diskActivity()
         let net = networkActivity()
         let battery = batteryLevel()
-        // GPU, fans, power not yet implemented
+        let gpu = gpuUsage()
+        let fan = fanSpeed()
+        let power = powerUsage()
         return SystemSample(cpu: cpu,
-                            gpu: 0,
+                            gpu: gpu,
                             memory: mem,
                             disk: disk,
                             network: net,
                             battery: battery,
-                            fans: 0,
-                            power: 0)
+                            fans: fan,
+                            power: power)
     }
 
     private func cpuUsage() -> Double {
@@ -92,8 +94,12 @@ final class SystemMonitor {
             if IORegistryEntryCreateCFProperties(service, &properties, kCFAllocatorDefault, 0) == KERN_SUCCESS,
                let dict = properties?.takeRetainedValue() as? [String: Any],
                let stats = dict[kIOBlockStorageDriverStatisticsKey] as? [String: Any] {
-                read += stats[kIOBlockStorageDriverStatisticsBytesReadKey] as? UInt64 ?? 0
-                write += stats[kIOBlockStorageDriverStatisticsBytesWrittenKey] as? UInt64 ?? 0
+                if let r = stats[kIOBlockStorageDriverStatisticsBytesReadKey] as? NSNumber {
+                    read += r.uint64Value
+                }
+                if let w = stats[kIOBlockStorageDriverStatisticsBytesWrittenKey] as? NSNumber {
+                    write += w.uint64Value
+                }
             }
             IOObjectRelease(service)
         }
@@ -135,5 +141,55 @@ final class SystemMonitor {
             return 0
         }
         return Double(current) / Double(max) * 100.0
+    }
+    private func gpuUsage() -> Double {
+        let matching = IOServiceMatching("IOAccelerator")
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
+            return 0
+        }
+        defer { IOObjectRelease(iterator) }
+        while case let service = IOIteratorNext(iterator), service != 0 {
+            if let perf = IORegistryEntryCreateCFProperty(service, "PerformanceStatistics" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? [String: Any],
+               let busy = perf["GPU Busy"] as? Double {
+                IOObjectRelease(service)
+                return busy * 100.0
+            }
+            IOObjectRelease(service)
+        }
+        return 0
+    }
+
+    private func fanSpeed() -> Double {
+        let matching = IOServiceMatching("AppleFan")
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
+            return 0
+        }
+        defer { IOObjectRelease(iterator) }
+        var total: Double = 0
+        var count: Double = 0
+        while case let service = IOIteratorNext(iterator), service != 0 {
+            if let rpm = IORegistryEntryCreateCFProperty(service, "actual-speed" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? Double {
+                total += rpm
+                count += 1
+            }
+            IOObjectRelease(service)
+        }
+        guard count > 0 else { return 0 }
+        return total / count
+    }
+
+    private func powerUsage() -> Double {
+        guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
+              let sources = IOPSCopyPowerSourcesList(snapshot)?.takeRetainedValue() as? [CFTypeRef],
+              !sources.isEmpty,
+              let info = IOPSGetPowerSourceDescription(snapshot, sources[0]).takeUnretainedValue() as? [String: Any],
+              let current = info[kIOPSCurrentKey] as? Int,
+              let voltage = info[kIOPSVoltageKey] as? Int else {
+            return 0
+        }
+        let watts = (Double(current) * Double(voltage)) / 1_000_000.0
+        return watts
     }
 }
