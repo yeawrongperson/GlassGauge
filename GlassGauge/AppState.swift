@@ -69,7 +69,7 @@ final class AppState: ObservableObject {
             cpu.secondary = "\(Int(s.cpuTemp))°C • \(temperatureBadge(for: s.cpuTemp))"
             cpu.accent = accentColor(for: s.cpuTemp)
         } else {
-            cpu.secondary = "Sensor Not Found"
+            cpu.secondary = "No Sensor Available"
             cpu.accent = .gray
         }
 
@@ -77,7 +77,7 @@ final class AppState: ObservableObject {
             gpu.secondary = "\(Int(s.gpuTemp))°C • \(temperatureBadge(for: s.gpuTemp))"
             gpu.accent = accentColor(for: s.gpuTemp)
         } else {
-            gpu.secondary = "Sensor Not Found"
+            gpu.secondary = "No Sensor Available"
             gpu.accent = .gray
         }
 
@@ -85,7 +85,7 @@ final class AppState: ObservableObject {
             disk.secondary = "\(Int(s.diskTemp))°C • \(temperatureBadge(for: s.diskTemp))"
             disk.accent = accentColor(for: s.diskTemp)
         } else {
-            disk.secondary = "Sensor Not Found"
+            disk.secondary = "No Sensor Available"
             disk.accent = .gray
         }
 
@@ -114,6 +114,23 @@ final class AppState: ObservableObject {
     }
 
     private func healthBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
         switch temp {
         case ..<70: return "ok"
         case ..<85: return "elevated"

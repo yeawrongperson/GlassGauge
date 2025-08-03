@@ -31,7 +31,6 @@ private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
 // battery cycle count rather than the design limit (commonly 1000 cycles).
 private let kIOPSCycleCountKey = "CycleCount"
 
-
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
     private var previousDisk: (read: UInt64, write: UInt64) = (0,0)
@@ -46,8 +45,8 @@ final class SystemMonitor {
         let gpu = gpuUsage()
         let fan = fanSpeed()
         let power = battery.powerOut > 0 ? battery.powerOut : battery.powerIn
-        let cpuT = temperature(for: ["cpu"])
-        let gpuT = temperature(for: ["gpu"])
+        let cpuT = cpuTemperature()
+        let gpuT = gpuTemperature()
         let diskT = temperature(for: ["ssd", "smart", "disk", "drive"])
         return SystemSample(cpu: cpu,
                             gpu: gpu,
@@ -63,6 +62,45 @@ final class SystemMonitor {
                             batteryCycle: battery.cycle,
                             powerIn: battery.powerIn,
                             powerOut: battery.powerOut)
+    }
+
+    private func cpuTemperature() -> Double {
+        smcTemperature(key: "TC0P")
+    }
+
+    private func gpuTemperature() -> Double {
+        smcTemperature(key: "TG0P")
+    }
+
+    private func smcTemperature(key: String) -> Double {
+#if arch(arm64)
+        return 0
+#else
+        let smcPaths = ["/usr/local/bin/smc", "/usr/sbin/smc", "/usr/bin/smc"]
+        guard let path = smcPaths.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) else {
+            return 0
+        }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: path)
+        process.arguments = ["-k", key, "-r"]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        do {
+            try process.run()
+        } catch {
+            return 0
+        }
+        process.waitUntilExit()
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        guard let output = String(data: data, encoding: .utf8) else {
+            return 0
+        }
+        if let value = output.split(whereSeparator: { $0.isWhitespace }).last,
+           let temp = Double(value) {
+            return temp
+        }
+        return 0
+#endif
     }
 
     private func cpuUsage() -> Double {
@@ -162,26 +200,13 @@ final class SystemMonitor {
               let max = info[kIOPSMaxCapacityKey] as? Int else {
             return (0,0,0,0)
         }
-        
         let level = Double(current) / Double(max) * 100.0
-        
-        // Get cycle count - try the key we can see in the output
-        let cycle = info["DesignCycleCount"] as? Int ?? 0
-        
-        // Get current in milliamps
-        let amps = info["Current"] as? Int ?? 0
-        
-        // Use default voltage for MacBook Pro 16" (2019) batteries
-        // Most MacBook Pro batteries are around 11.1V to 11.4V nominal
-        let voltage = 11250.0  // 11.25V in millivolts (typical for MacBook Pro 16")
-        
-        // Calculate watts: (milliamps * millivolts) / 1,000,000 = watts
-        let watts = abs(Double(amps)) * voltage / 1_000_000.0
-        
-        // Positive current means charging (power in), negative means discharging (power out)
+        let cycle = (info[kIOPSCycleCountKey] as? NSNumber)?.intValue ?? 0
+        let amps = info[kIOPSCurrentKey] as? Double ?? 0
+        let voltage = info[kIOPSVoltageKey] as? Double ?? 0
+        let watts = abs(amps) * voltage / 1_000_000.0
         let inW = amps > 0 ? watts : 0
         let outW = amps < 0 ? watts : 0
-        
         return (level, cycle, inW, outW)
     }
 
