@@ -21,7 +21,7 @@ enum TimeRange: String, CaseIterable, Identifiable {
     }
 }
 
-struct SamplePoint: Identifiable {
+struct SamplePoint: Identifiable, Equatable {
     let id = UUID()
     let t: Date
     let v: Double
@@ -31,12 +31,13 @@ final class MetricModel: ObservableObject, Identifiable {
     let id = UUID()
     let title: String
     let icon: String
-    let unit: String
+    @Published var unit: String
     let formatter: NumberFormatter
 
     @Published var primaryValue: Double = 0
     @Published var secondary: String? = nil
     @Published var samples: [SamplePoint] = []
+    @Published var accent: Color = .primary
 
     init(_ title: String, icon: String, unit: String) {
         self.title = title
