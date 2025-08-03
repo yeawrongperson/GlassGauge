@@ -467,16 +467,22 @@ final class SystemMonitor {
         let level = Double(current) / Double(max) * 100.0
         let cycle = info[kIOPSCycleCountKey as String] as? Int ?? 0
 
-        let amps = info[kIOPSCurrentKey as String] as? Int ?? 0
-        let voltage = info[kIOPSVoltageKey as String] as? Int ?? 11250
+        // Read current and voltage as NSNumber to support both Int and Double values
+        let ampsNum = (info[kIOPSCurrentKey as String] as? NSNumber)
+            ?? (info["Amperage"] as? NSNumber)
+        let voltsNum = (info[kIOPSVoltageKey as String] as? NSNumber)
+            ?? (info["Voltage"] as? NSNumber)
 
-        // Convert to watts (mA * mV -> mW -> W)
-        let watts = Double(abs(amps)) * Double(voltage) / 1_000_000.0
+        let amps = ampsNum?.doubleValue ?? 0
+        let voltage = voltsNum?.doubleValue ?? 11250
 
-        // Determine direction using the charging flag when available
-        let charging = info[kIOPSIsChargingKey as String] as? Bool ?? (amps > 0)
-        let inW = charging ? watts : 0
-        let outW = charging ? 0 : watts
+        // Convert to watts (mA * mV -> mW -> W) and keep magnitude
+        let watts = abs(amps) * voltage / 1_000_000.0
+
+        // Determine direction using the charging flag when available, falling back to current sign
+        let isCharging = info[kIOPSIsChargingKey as String] as? Bool ?? (amps > 0)
+        let inW = isCharging ? watts : 0
+        let outW = isCharging ? 0 : watts
 
         return (level, cycle, inW, outW)
     }
