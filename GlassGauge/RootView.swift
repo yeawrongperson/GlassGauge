@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct RootView: View {
@@ -22,6 +21,7 @@ struct RootView: View {
                     Label("Battery", systemImage: "battery.100").tag(SectionID.battery)
                     Label("Fans", systemImage: "fanblades").tag(SectionID.fans)
                     Label("Power", systemImage: "bolt.fill").tag(SectionID.power)
+                    Label("Temps", systemImage: "thermometer").tag(SectionID.temps)
                 }
                 Section("App") {
                     Label("Settings", systemImage: "gearshape").tag(SectionID.settings)
@@ -61,5 +61,6 @@ struct RootView: View {
                     .frame(maxWidth: 240)
             }
         }
+        .background(VisualEffectView(material: .hudWindow))
     }
 }

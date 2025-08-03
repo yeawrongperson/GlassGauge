@@ -18,6 +18,7 @@ final class AppState: ObservableObject {
     @Published var battery = MetricModel("Battery", icon: "battery.100", unit: "%")
     @Published var fans = MetricModel("Fans", icon: "fanblades", unit: "RPM")
     @Published var power = MetricModel("Power", icon: "bolt.fill", unit: "W")
+    @Published var temps = MetricModel("Temps", icon: "thermometer", unit: "°C")
 
     @Published var pinnedIDs: Set<UUID> = []
 
@@ -92,7 +93,66 @@ final class AppState: ObservableObject {
     }
 
     var allMetrics: [MetricModel] {
-        [cpu, gpu, memory, disk, network, battery, fans, power]
+        [cpu, gpu, memory, disk, network, battery, fans, power, temps]
+    }
+
+    private func color(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func badge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func healthBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
     }
 
     private func accentColor(for temp: Double) -> Color {
