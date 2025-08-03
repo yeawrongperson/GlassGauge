@@ -27,7 +27,10 @@ private let kIOBlockStorageDriverStatisticsBytesReadKey = "Bytes (Read)"
 private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
 // Not all Swift toolchains surface the cycle count key from IOPowerSources,
 // so declare the string constant manually to avoid build failures.
-private let kIOPSCycleCountKey = "Cycle Count"
+// Use the exact key name expected by IOPowerSources so we read the current
+// battery cycle count rather than the design limit (commonly 1000 cycles).
+private let kIOPSCycleCountKey = "CycleCount"
+
 
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
