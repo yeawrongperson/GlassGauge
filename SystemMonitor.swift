@@ -443,32 +443,47 @@ final class SystemMonitor {
     private func batteryInfo() -> (level: Double, cycle: Int, powerIn: Double, powerOut: Double) {
         guard let snapshot = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
               let sources = IOPSCopyPowerSourcesList(snapshot)?.takeRetainedValue() as? [CFTypeRef],
-              !sources.isEmpty,
-              let info = IOPSGetPowerSourceDescription(snapshot, sources[0]).takeUnretainedValue() as? [String: Any],
-              let current = info[kIOPSCurrentCapacityKey] as? Int,
-              let max = info[kIOPSMaxCapacityKey] as? Int else {
+              !sources.isEmpty else {
             return (0,0,0,0)
         }
-        
+
+        // Find the internal battery source instead of assuming the first entry
+        var batteryDetails: [String: Any]? = nil
+        for ps in sources {
+            if let info = IOPSGetPowerSourceDescription(snapshot, ps)?.takeUnretainedValue() as? [String: Any],
+               let type = info[kIOPSTypeKey as String] as? String,
+               type == kIOPSInternalBatteryType {
+                batteryDetails = info
+                break
+            }
+        }
+
+        guard let info = batteryDetails,
+              let current = info[kIOPSCurrentCapacityKey as String] as? Int,
+              let max = info[kIOPSMaxCapacityKey as String] as? Int else {
+            return (0,0,0,0)
+        }
+
         let level = Double(current) / Double(max) * 100.0
-        
-        // Get cycle count - try the key we can see in the output
-        let cycle = info["DesignCycleCount"] as? Int ?? 0
-        
-        // Get current in milliamps
-        let amps = info["Current"] as? Int ?? 0
-        
-        // Use default voltage for MacBook Pro 16" (2019) batteries
-        // Most MacBook Pro batteries are around 11.1V to 11.4V nominal
-        let voltage = 11250.0  // 11.25V in millivolts (typical for MacBook Pro 16")
-        
-        // Calculate watts: (milliamps * millivolts) / 1,000,000 = watts
-        let watts = abs(Double(amps)) * voltage / 1_000_000.0
-        
-        // Positive current means charging (power in), negative means discharging (power out)
-        let inW = amps > 0 ? watts : 0
-        let outW = amps < 0 ? watts : 0
-        
+        let cycle = info[kIOPSCycleCountKey as String] as? Int ?? 0
+
+        // Read current and voltage as NSNumber to support both Int and Double values
+        let ampsNum = (info[kIOPSCurrentKey as String] as? NSNumber)
+            ?? (info["Amperage"] as? NSNumber)
+        let voltsNum = (info[kIOPSVoltageKey as String] as? NSNumber)
+            ?? (info["Voltage"] as? NSNumber)
+
+        let amps = ampsNum?.doubleValue ?? 0
+        let voltage = voltsNum?.doubleValue ?? 11250
+
+        // Convert to watts (mA * mV -> mW -> W) and keep magnitude
+        let watts = abs(amps) * voltage / 1_000_000.0
+
+        // Determine direction using the charging flag when available, falling back to current sign
+        let isCharging = info[kIOPSIsChargingKey as String] as? Bool ?? (amps > 0)
+        let inW = isCharging ? watts : 0
+        let outW = isCharging ? 0 : watts
+
         return (level, cycle, inW, outW)
     }
 
