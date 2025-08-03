@@ -35,81 +35,23 @@ struct SensorDetailView: View {
     }
 
     private var chartSection: some View {
-        Group {
-            if metric.id == state.power.id {
-                segmentedPowerChart
-            } else {
-                defaultChart
-            }
+        let chartColor = metric.id == state.power.id ? color(for: metric.samples.last?.direction) : metric.accent
+
+        return Chart(metric.samples) { sample in
+            LineMark(
+                x: .value("Time", sample.t),
+                y: .value(metric.unit, sample.v)
+            )
+            .interpolationMethod(.catmullRom)
         }
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 4))
+        }
+        .foregroundStyle(chartColor)
         .frame(minHeight: 240)
         .glassBackground(emphasized: !state.reduceMotion)
         .animation(state.reduceMotion ? nil : .default, value: metric.samples)
     }
-
-    private var segmentedPowerChart: some View {
-        Chart {
-            let segments = segmentSamples(metric.samples)
-
-            ForEach(segments) { segment in
-                let points = segment.points
-                let style = color(for: segment.state)
-
-                ForEach(points) { point in
-                    LineMark(
-                        x: .value("Time", point.t),
-                        y: .value(metric.unit, point.v)
-                    )
-                    .interpolationMethod(.catmullRom)
-                    .foregroundStyle(style)
-                }
-            }
-        }
-        .chartXAxis {
-            AxisMarks(values: .automatic(desiredCount: 4))
-        }
-    }
-
-    private var defaultChart: some View {
-        Chart(metric.samples) {
-            LineMark(
-                x: .value("Time", $0.t),
-                y: .value(metric.unit, $0.v)
-            )
-            .interpolationMethod(.catmullRom)
-            .foregroundStyle(metric.accent)
-        }
-        .chartXAxis {
-            AxisMarks(values: .automatic(desiredCount: 4))
-        }
-    }
-}
-
-private struct SampleSegment: Identifiable {
-    let id = UUID()
-    let state: PowerDirection?
-    var points: [SamplePoint]
-}
-
-private func segmentSamples(_ samples: [SamplePoint]) -> [SampleSegment] {
-    var result: [SampleSegment] = []
-    guard !samples.isEmpty else { return result }
-    var currentState = samples.first?.direction
-    var currentPoints: [SamplePoint] = []
-
-    for s in samples {
-        if s.direction == currentState {
-            currentPoints.append(s)
-        } else {
-            result.append(SampleSegment(state: currentState, points: currentPoints))
-            currentState = s.direction
-            currentPoints = [s]
-        }
-    }
-    if !currentPoints.isEmpty {
-        result.append(SampleSegment(state: currentState, points: currentPoints))
-    }
-    return result
 }
 
 private func color(for state: PowerDirection?) -> Color {
