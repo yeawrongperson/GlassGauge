@@ -35,15 +35,18 @@ struct SensorDetailView: View {
                         .foregroundStyle(color(for: segment.state))
                     }
                 }
+                .chartXAxis {
+                    AxisMarks(values: .automatic(desiredCount: 4))
+                }
             } else {
                 Chart(metric.samples) {
                     LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
                         .interpolationMethod(.catmullRom)
                         .foregroundStyle(metric.accent)
                 }
-            }
-            .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 4))
+                .chartXAxis {
+                    AxisMarks(values: .automatic(desiredCount: 4))
+                }
             }
             .frame(minHeight: 240)
             .glassBackground(emphasized: !state.reduceMotion)
