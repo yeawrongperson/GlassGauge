@@ -22,9 +22,15 @@ enum TimeRange: String, CaseIterable, Identifiable {
 }
 
 
+enum PowerDirection: Hashable {
+    case charging
+    case using
+}
+
 struct SamplePoint: Hashable, Identifiable {
     let t: Date
     let v: Double
+    var direction: PowerDirection? = nil
 
     // Required for Identifiable
     var id: String {
