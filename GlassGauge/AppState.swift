@@ -154,4 +154,21 @@ final class AppState: ObservableObject {
         default: return "critical"
         }
     }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
 }

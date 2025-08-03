@@ -55,8 +55,6 @@ struct RootView: View {
                 }
                 .pickerStyle(.segmented)
             }
-        }
-        .toolbar {
             ToolbarItem(placement: .automatic) {
                 TextField("Search sensors…", text: $state.searchText)
                     .textFieldStyle(.roundedBorder)
