@@ -29,38 +29,39 @@ struct RootView: View {
             }
             .navigationTitle("GlassGauge")
         } detail: {
-            switch state.selection {
-            case .overview: OverviewView().environmentObject(state)
-            case .sensors: SensorsView().environmentObject(state)
-            case .alerts: AlertsView().environmentObject(state)
-            case .logs: LogsView().environmentObject(state)
-            case .cpu: SensorDetailView(metric: state.cpu).environmentObject(state)
-            case .gpu: SensorDetailView(metric: state.gpu).environmentObject(state)
-            case .memory: SensorDetailView(metric: state.memory).environmentObject(state)
-            case .disks: SensorDetailView(metric: state.disk).environmentObject(state)
-            case .network: SensorDetailView(metric: state.network).environmentObject(state)
-            case .battery: SensorDetailView(metric: state.battery).environmentObject(state)
-            case .fans: SensorDetailView(metric: state.fans).environmentObject(state)
-            case .power: SensorDetailView(metric: state.power).environmentObject(state)
-            case .settings: SettingsView().environmentObject(state)
-            }
-        }
-        .background(VisualEffectView(material: .hudWindow))
-        .toolbar {
-            ToolbarItem(placement: .automatic) {
-                Picker("Range", selection: $state.range) {
-                    Text("Now").tag(TimeRange.now)
-                    Text("1h").tag(TimeRange.hour1)
-                    Text("24h").tag(TimeRange.hour24)
+            Group {
+                switch state.selection {
+                case .overview: OverviewView().environmentObject(state)
+                case .sensors: SensorsView().environmentObject(state)
+                case .alerts: AlertsView().environmentObject(state)
+                case .logs: LogsView().environmentObject(state)
+                case .cpu: SensorDetailView(metric: state.cpu).environmentObject(state)
+                case .gpu: SensorDetailView(metric: state.gpu).environmentObject(state)
+                case .memory: SensorDetailView(metric: state.memory).environmentObject(state)
+                case .disks: SensorDetailView(metric: state.disk).environmentObject(state)
+                case .network: SensorDetailView(metric: state.network).environmentObject(state)
+                case .battery: SensorDetailView(metric: state.battery).environmentObject(state)
+                case .fans: SensorDetailView(metric: state.fans).environmentObject(state)
+                case .power: SensorDetailView(metric: state.power).environmentObject(state)
+                case .temps: SensorDetailView(metric: state.temps).environmentObject(state)
+                case .settings: SettingsView().environmentObject(state)
                 }
-                .pickerStyle(.segmented)
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .automatic) {
-                TextField("Search sensors…", text: $state.searchText)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(maxWidth: 240)
+            .toolbar {
+                ToolbarItemGroup(placement: .automatic) {
+                    Picker("Range", selection: $state.range) {
+                        Text("Now").tag(TimeRange.now)
+                        Text("1h").tag(TimeRange.hour1)
+                        Text("24h").tag(TimeRange.hour24)
+                    }
+                    .pickerStyle(.segmented)
+
+                    Spacer()
+
+                    TextField("Search sensors…", text: $state.searchText)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(maxWidth: 240)
+                }
             }
         }
         .background(VisualEffectView(material: .hudWindow))
