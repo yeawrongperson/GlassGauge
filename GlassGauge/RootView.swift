@@ -47,28 +47,19 @@ struct RootView: View {
         }
         .background(VisualEffectView(material: .hudWindow))
         .toolbar {
-            ToolbarItemGroup(placement: .automatic) {
+            ToolbarItem(placement: .automatic) {
                 Picker("Range", selection: $state.range) {
                     Text("Now").tag(TimeRange.now)
                     Text("1h").tag(TimeRange.hour1)
                     Text("24h").tag(TimeRange.hour24)
                 }
+                .pickerStyle(.segmented)
             }
-            .toolbar {
-                ToolbarItemGroup(placement: .automatic) {
-                    Picker("Range", selection: $state.range) {
-                        Text("Now").tag(TimeRange.now)
-                        Text("1h").tag(TimeRange.hour1)
-                        Text("24h").tag(TimeRange.hour24)
-                    }
-                    .pickerStyle(.segmented)
 
-                    Spacer()
-
-                    TextField("Search sensors…", text: $state.searchText)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(maxWidth: 240)
-                }
+            ToolbarItem(placement: .automatic) {
+                TextField("Search sensors…", text: $state.searchText)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(maxWidth: 240)
             }
         }
         .background(VisualEffectView(material: .hudWindow))
