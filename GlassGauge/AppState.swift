@@ -179,8 +179,8 @@ final class AppState: ObservableObject {
             power.secondary = "Charging at \(String(format: "%.1f", s.powerIn))W"
             power.accent = .green
         } else if s.powerOut > 0 {
-            power.secondary = "Discharging at \(String(format: "%.1f", s.powerOut))W"
-            power.accent = .orange
+            power.secondary = "Using \(String(format: "%.1f", s.powerOut))W"
+            power.accent = .red
         } else {
             power.secondary = "Power Information Unavailable"
             power.accent = .gray

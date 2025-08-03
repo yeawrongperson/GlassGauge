@@ -8,19 +8,27 @@ struct SensorDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
+            HStack(alignment: .top) {
                 Label(metric.title, systemImage: metric.icon)
                     .font(.title2.bold())
                 Spacer()
-                Text(metric.primaryString)
-                    .font(.system(size: 34, weight: .semibold, design: .rounded))
-                    .monospacedDigit()
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(metric.primaryString)
+                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                    if let secondary = metric.secondary {
+                        Text(secondary)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
             .padding(.horizontal, 8)
 
             Chart(metric.samples) {
                 LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
                     .interpolationMethod(.catmullRom)
+                    .foregroundStyle(metric.accent)
             }
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 4))
