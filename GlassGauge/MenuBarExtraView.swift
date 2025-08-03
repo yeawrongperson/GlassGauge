@@ -21,12 +21,19 @@ struct MiniTile: View {
     @ObservedObject var model: MetricModel
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Label(model.title, systemImage: model.icon)
-                .font(.caption)
-                .labelStyle(.titleAndIcon)
+            Label {
+                Text(model.title)
+            } icon: {
+                Image(systemName: model.icon)
+                    .foregroundStyle(model.accent)
+            }
+            .font(.caption)
             Text(model.primaryString)
-                .font(.headline).monospacedDigit()
+                .font(.headline)
+                .monospacedDigit()
+                .foregroundStyle(model.accent)
             MiniChart(samples: model.samples, reduceMotion: state.reduceMotion)
+                .foregroundStyle(model.accent)
                 .frame(height: 20)
                 .accessibilityHidden(true)
         }
