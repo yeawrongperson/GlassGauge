@@ -445,30 +445,23 @@ final class SystemMonitor {
               let sources = IOPSCopyPowerSourcesList(snapshot)?.takeRetainedValue() as? [CFTypeRef],
               !sources.isEmpty,
               let info = IOPSGetPowerSourceDescription(snapshot, sources[0]).takeUnretainedValue() as? [String: Any],
-              let current = info[kIOPSCurrentCapacityKey] as? Int,
-              let max = info[kIOPSMaxCapacityKey] as? Int else {
+              let current = info[kIOPSCurrentCapacityKey as String] as? Int,
+              let max = info[kIOPSMaxCapacityKey as String] as? Int else {
             return (0,0,0,0)
         }
-        
+
         let level = Double(current) / Double(max) * 100.0
-        
-        // Get cycle count - try the key we can see in the output
-        let cycle = info["DesignCycleCount"] as? Int ?? 0
-        
-        // Get current in milliamps
-        let amps = info["Current"] as? Int ?? 0
-        
-        // Use default voltage for MacBook Pro 16" (2019) batteries
-        // Most MacBook Pro batteries are around 11.1V to 11.4V nominal
-        let voltage = 11250.0  // 11.25V in millivolts (typical for MacBook Pro 16")
-        
-        // Calculate watts: (milliamps * millivolts) / 1,000,000 = watts
-        let watts = abs(Double(amps)) * voltage / 1_000_000.0
-        
-        // Positive current means charging (power in), negative means discharging (power out)
+
+        let cycle = info[kIOPSCycleCountKey as String] as? Int ?? 0
+
+        let amps = info[kIOPSCurrentKey as String] as? Int ?? 0
+        let voltage = info[kIOPSVoltageKey as String] as? Int ?? 11250
+
+        let watts = abs(Double(amps * voltage)) / 1_000_000.0
+
         let inW = amps > 0 ? watts : 0
         let outW = amps < 0 ? watts : 0
-        
+
         return (level, cycle, inW, outW)
     }
 
