@@ -11,7 +11,6 @@ struct NetworkDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 headerSection
                 trafficSummaryCards
-                combinedChartSection
                 detailChartsSection
                 Spacer(minLength: 50)
             }
@@ -94,95 +93,6 @@ struct NetworkDetailView: View {
         }
         .padding()
         .glassBackground(emphasized: !state.reduceMotion)
-    }
-    
-    private var combinedChartSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Network Activity Over Time")
-                .font(.headline)
-            
-            combinedChart
-                .frame(height: 300)
-                .glassBackground(emphasized: !state.reduceMotion)
-            
-            chartLegend
-        }
-    }
-    
-    private var combinedChart: some View {
-        Chart {
-            ForEach(cleanIncomingSamples) { sample in
-                createIncomingLineMark(sample: sample)
-            }
-            
-            ForEach(cleanOutgoingSamples) { sample in
-                createOutgoingLineMark(sample: sample)
-            }
-        }
-        .chartXAxis {
-            AxisMarks(values: .automatic(desiredCount: 4)) { value in
-                AxisGridLine()
-                AxisTick()
-                AxisValueLabel {
-                    if let date = value.as(Date.self) {
-                        Text(date, format: .dateTime.hour().minute())
-                            .font(.caption)
-                    }
-                }
-            }
-        }
-        .chartYAxis {
-            AxisMarks(position: .leading) { value in
-                AxisGridLine()
-                AxisTick()
-                AxisValueLabel {
-                    let doubleValue = value.as(Double.self) ?? 0
-                    Text("\(doubleValue, specifier: "%.0f")")
-                        .font(.caption)
-                }
-            }
-        }
-        .chartYScale(domain: 0...max(getCleanMaxValue(), 50))
-        .chartXScale(domain: getTimeRange())
-    }
-    
-    private func createIncomingLineMark(sample: SamplePoint) -> some ChartContent {
-        LineMark(
-            x: .value("Time", sample.t),
-            y: .value("Traffic", sample.v)
-        )
-        .foregroundStyle(.green)
-        .interpolationMethod(.linear)
-    }
-    
-    private func createOutgoingLineMark(sample: SamplePoint) -> some ChartContent {
-        LineMark(
-            x: .value("Time", sample.t),
-            y: .value("Traffic", sample.v)
-        )
-        .foregroundStyle(.red)
-        .interpolationMethod(.linear)
-    }
-    
-    private var chartLegend: some View {
-        HStack(spacing: 24) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(.green)
-                    .frame(width: 8, height: 8)
-                Text("Incoming")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(.red)
-                    .frame(width: 8, height: 8)
-                Text("Outgoing")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
     }
     
     private var detailChartsSection: some View {
