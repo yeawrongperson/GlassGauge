@@ -162,13 +162,26 @@ final class SystemMonitor {
               let max = info[kIOPSMaxCapacityKey] as? Int else {
             return (0,0,0,0)
         }
+        
         let level = Double(current) / Double(max) * 100.0
-        let cycle = (info[kIOPSCycleCountKey] as? NSNumber)?.intValue ?? 0
-        let amps = info[kIOPSCurrentKey] as? Double ?? 0
-        let voltage = info[kIOPSVoltageKey] as? Double ?? 0
-        let watts = abs(amps) * voltage / 1_000_000.0
+        
+        // Get cycle count - try the key we can see in the output
+        let cycle = info["DesignCycleCount"] as? Int ?? 0
+        
+        // Get current in milliamps
+        let amps = info["Current"] as? Int ?? 0
+        
+        // Use default voltage for MacBook Pro 16" (2019) batteries
+        // Most MacBook Pro batteries are around 11.1V to 11.4V nominal
+        let voltage = 11250.0  // 11.25V in millivolts (typical for MacBook Pro 16")
+        
+        // Calculate watts: (milliamps * millivolts) / 1,000,000 = watts
+        let watts = abs(Double(amps)) * voltage / 1_000_000.0
+        
+        // Positive current means charging (power in), negative means discharging (power out)
         let inW = amps > 0 ? watts : 0
         let outW = amps < 0 ? watts : 0
+        
         return (level, cycle, inW, outW)
     }
 
