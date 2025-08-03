@@ -26,7 +26,9 @@ struct MiniTile: View {
             Text(model.primaryString)
                 .font(.headline).monospacedDigit()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
+        .frame(maxWidth: .infinity, minHeight: 60, alignment: .leading)
         .background(VisualEffectView(material: .menu))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
