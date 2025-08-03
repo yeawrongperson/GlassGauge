@@ -25,10 +25,22 @@ struct SensorDetailView: View {
             }
             .padding(.horizontal, 8)
 
-            Chart(metric.samples) {
-                LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
-                    .interpolationMethod(.catmullRom)
-                    .foregroundStyle(metric.accent)
+            if metric.id == state.power.id {
+                Chart {
+                    ForEach(segmentSamples(metric.samples)) { segment in
+                        ForEach(segment.points) { point in
+                            LineMark(x: .value("Time", point.t), y: .value(metric.unit, point.v))
+                        }
+                        .interpolationMethod(.catmullRom)
+                        .foregroundStyle(color(for: segment.state))
+                    }
+                }
+            } else {
+                Chart(metric.samples) {
+                    LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
+                        .interpolationMethod(.catmullRom)
+                        .foregroundStyle(metric.accent)
+                }
             }
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 4))
@@ -41,6 +53,41 @@ struct SensorDetailView: View {
         }
         .padding(16)
         .background(VisualEffectView(material: .hudWindow))
+    }
+}
+
+private struct SampleSegment: Identifiable {
+    let id = UUID()
+    let state: PowerDirection?
+    var points: [SamplePoint]
+}
+
+private func segmentSamples(_ samples: [SamplePoint]) -> [SampleSegment] {
+    var result: [SampleSegment] = []
+    guard !samples.isEmpty else { return result }
+    var currentState = samples.first?.direction
+    var currentPoints: [SamplePoint] = []
+
+    for s in samples {
+        if s.direction == currentState {
+            currentPoints.append(s)
+        } else {
+            result.append(SampleSegment(state: currentState, points: currentPoints))
+            currentState = s.direction
+            currentPoints = [s]
+        }
+    }
+    if !currentPoints.isEmpty {
+        result.append(SampleSegment(state: currentState, points: currentPoints))
+    }
+    return result
+}
+
+private func color(for state: PowerDirection?) -> Color {
+    switch state {
+    case .charging: return .green
+    case .using: return .red
+    default: return .gray
     }
 }
 

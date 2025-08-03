@@ -37,10 +37,10 @@ final class AppState: ObservableObject {
         }
     }
     
-    private func push(_ model: MetricModel, value: Double) {
+    private func push(_ model: MetricModel, value: Double, direction: PowerDirection? = nil) {
         let now = Date()
         model.primaryValue = value
-        model.samples.append(SamplePoint(t: now, v: value))
+        model.samples.append(SamplePoint(t: now, v: value, direction: direction))
         // Trim to current range window
         let cutoff = now.addingTimeInterval(-range.window)
         model.samples.removeAll { $0.t < cutoff }
@@ -86,7 +86,6 @@ final class AppState: ObservableObject {
         
         push(battery, value: s.battery)
         push(fans, value: s.fans)
-        push(power, value: s.power)
         
         // Calculate and update average temperature for Temps tab
         let validTemps = [s.cpuTemp, s.gpuTemp, s.diskTemp].filter { $0 > 0 }
@@ -178,12 +177,15 @@ final class AppState: ObservableObject {
         if s.powerIn > 0 {
             power.secondary = "Charging at \(String(format: "%.1f", s.powerIn))W"
             power.accent = .green
+            push(power, value: s.powerIn, direction: .charging)
         } else if s.powerOut > 0 {
             power.secondary = "Using \(String(format: "%.1f", s.powerOut))W"
             power.accent = .red
+            push(power, value: s.powerOut, direction: .using)
         } else {
             power.secondary = "Power Information Unavailable"
             power.accent = .gray
+            push(power, value: 0)
         }
         
         // Update GPU secondary info with more details
