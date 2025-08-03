@@ -25,37 +25,49 @@ struct SensorDetailView: View {
             }
             .padding(.horizontal, 8)
 
-            if metric.id == state.power.id {
-                Chart {
-                    ForEach(segmentSamples(metric.samples)) { segment in
-                        ForEach(segment.points) { point in
-                            LineMark(x: .value("Time", point.t), y: .value(metric.unit, point.v))
-                        }
-                        .interpolationMethod(.catmullRom)
-                        .foregroundStyle(color(for: segment.state))
-                    }
-                }
-                .chartXAxis {
-                    AxisMarks(values: .automatic(desiredCount: 4))
-                }
-            } else {
-                Chart(metric.samples) {
-                    LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
-                        .interpolationMethod(.catmullRom)
-                        .foregroundStyle(metric.accent)
-                }
-                .chartXAxis {
-                    AxisMarks(values: .automatic(desiredCount: 4))
-                }
-            }
-            .frame(minHeight: 240)
-            .glassBackground(emphasized: !state.reduceMotion)
-            .animation(state.reduceMotion ? nil : .default, value: metric.samples)
+            chart
+                .frame(minHeight: 240)
+                .glassBackground(emphasized: !state.reduceMotion)
+                .animation(state.reduceMotion ? nil : .default, value: metric.samples)
 
             Spacer()
         }
         .padding(16)
         .background(VisualEffectView(material: .hudWindow))
+    }
+
+    @ViewBuilder private var chart: some View {
+        if metric.id == state.power.id {
+            powerChart
+        } else {
+            defaultChart
+        }
+    }
+
+    private var powerChart: some View {
+        Chart {
+            ForEach(segmentSamples(metric.samples)) { segment in
+                ForEach(segment.points) { point in
+                    LineMark(x: .value("Time", point.t), y: .value(metric.unit, point.v))
+                }
+                .interpolationMethod(.catmullRom)
+                .foregroundStyle(color(for: segment.state))
+            }
+        }
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 4))
+        }
+    }
+
+    private var defaultChart: some View {
+        Chart(metric.samples) {
+            LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
+                .interpolationMethod(.catmullRom)
+                .foregroundStyle(metric.accent)
+        }
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 4))
+        }
     }
 }
 
