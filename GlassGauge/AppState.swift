@@ -180,7 +180,7 @@ final class AppState: ObservableObject {
             power.accent = .green
         } else if s.powerOut > 0 {
             power.secondary = "Using \(String(format: "%.1f", s.powerOut))W"
-            power.accent = .orange
+            power.accent = .red
         } else {
             power.secondary = "Power Information Unavailable"
             power.accent = .gray

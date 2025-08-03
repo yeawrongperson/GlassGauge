@@ -28,6 +28,7 @@ struct SensorDetailView: View {
             Chart(metric.samples) {
                 LineMark(x: .value("Time", $0.t), y: .value(metric.unit, $0.v))
                     .interpolationMethod(.catmullRom)
+                    .foregroundStyle(metric.accent)
             }
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 4))
