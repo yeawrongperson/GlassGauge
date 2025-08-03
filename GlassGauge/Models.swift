@@ -31,7 +31,7 @@ final class MetricModel: ObservableObject, Identifiable {
     let id = UUID()
     let title: String
     let icon: String
-    let unit: String
+    @Published var unit: String
     let formatter: NumberFormatter
 
     @Published var primaryValue: Double = 0

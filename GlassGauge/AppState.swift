@@ -50,7 +50,16 @@ final class AppState: ObservableObject {
         push(cpu, value: s.cpu)
         push(gpu, value: s.gpu)
         push(memory, value: s.memory)
-        push(disk, value: s.disk)
+
+        // Scale disk throughput to MB/s when exceeding 1,024 KB/s for readability
+        if s.disk >= 1024 {
+            disk.unit = "MB/s"
+            push(disk, value: s.disk / 1024)
+        } else {
+            disk.unit = "KB/s"
+            push(disk, value: s.disk)
+        }
+
         push(network, value: s.network)
         push(battery, value: s.battery)
         push(fans, value: s.fans)
@@ -105,6 +114,23 @@ final class AppState: ObservableObject {
     }
 
     private func healthBadge(for temp: Double) -> String {
+        switch temp {
+        case ..<70: return "ok"
+        case ..<85: return "elevated"
+        default: return "critical"
+        }
+    }
+
+    private func accentColor(for temp: Double) -> Color {
+        switch temp {
+        case ..<40: return .teal
+        case ..<70: return .blue
+        case ..<85: return .orange
+        default: return .red
+        }
+    }
+
+    private func temperatureBadge(for temp: Double) -> String {
         switch temp {
         case ..<70: return "ok"
         case ..<85: return "elevated"

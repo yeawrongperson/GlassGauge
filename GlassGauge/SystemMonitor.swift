@@ -29,7 +29,6 @@ private let kIOBlockStorageDriverStatisticsBytesWrittenKey = "Bytes (Write)"
 // so declare the string constant manually to avoid build failures.
 private let kIOPSCycleCountKey = "Cycle Count"
 
-
 final class SystemMonitor {
     private var previousCPULoad: host_cpu_load_info?
     private var previousDisk: (read: UInt64, write: UInt64) = (0,0)
