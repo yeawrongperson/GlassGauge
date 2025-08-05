@@ -267,7 +267,8 @@ struct SettingsView: View {
     private func checkConsoleLogs() {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/log")
-        process.arguments = ["show", "--predicate", "subsystem == 'com.zeiglerstudios.glassgauge.helper'", "--last", "5m"]
+        let helperExecutable = SMBlessedHelperManager.helperExecutableName
+        process.arguments = ["show", "--predicate", "subsystem == '\(helperExecutable)'", "--last", "5m"]
         
         let pipe = Pipe()
         process.standardOutput = pipe

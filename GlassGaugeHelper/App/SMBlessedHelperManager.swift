@@ -5,8 +5,15 @@ import os.log
 
 class SMBlessedHelperManager {
     static let shared = SMBlessedHelperManager()
-    private let helperMachServiceName = "com.zeiglerstudios.glassgauge.helper"
-    private let helperBundleFilename = "com.zeiglerstudios.glassgauge.helper"
+    static let helperExecutableName: String = {
+        if let smPrivileged = Bundle.main.object(forInfoDictionaryKey: "SMPrivilegedExecutables") as? [String: Any],
+           let name = smPrivileged.keys.first {
+            return name
+        }
+        return "com.zeiglerstudios.glassgauge.helper"
+    }()
+    private let helperMachServiceName = SMBlessedHelperManager.helperExecutableName
+    private let helperBundleFilename = SMBlessedHelperManager.helperExecutableName
     private let logger = Logger(subsystem: "com.zeiglerstudios.glassgauge", category: "SMBlessedHelper")
     
     // Add a flag to prevent multiple simultaneous installation attempts
@@ -411,8 +418,8 @@ class SMBlessedHelperManager {
             return NSError(domain: "SMJobBless", code: -1, userInfo: [NSLocalizedDescriptionKey: "Helper bundle identifier not found"])
         }
         
-        if helperBundleID != "com.zeiglerstudios.glassgauge.helper" {
-            logger.error("❌ Helper bundle identifier mismatch: expected 'com.zeiglerstudios.glassgauge.helper', got '\(helperBundleID)'")
+        if helperBundleID != helperBundleFilename {
+            logger.error("❌ Helper bundle identifier mismatch: expected '\(helperBundleFilename)', got '\(helperBundleID)'")
             return NSError(domain: "SMJobBless", code: -1, userInfo: [NSLocalizedDescriptionKey: "Helper bundle identifier mismatch"])
         }
         
