@@ -6,6 +6,9 @@ import os.log
 class SMBlessedHelperManager {
     static let shared = SMBlessedHelperManager()
     static let helperExecutableName: String = {
+        if let executable = Bundle.main.object(forInfoDictionaryKey: "CFBundleExecutable") as? String {
+            return executable
+        }
         if let smPrivileged = Bundle.main.object(forInfoDictionaryKey: "SMPrivilegedExecutables") as? [String: Any],
            let name = smPrivileged.keys.first {
             return name

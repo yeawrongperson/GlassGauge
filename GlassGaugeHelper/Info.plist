@@ -7,7 +7,7 @@
     <key>CFBundleName</key>
     <string>GlassGaugeHelper</string>
     <key>CFBundleExecutable</key>
-    <string>com.zeiglerstudios.glassgauge.helper</string>
+    <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>
