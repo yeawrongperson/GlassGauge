@@ -6,6 +6,7 @@ import os.log
 class SMBlessedHelperManager {
     static let shared = SMBlessedHelperManager()
     private let helperMachServiceName = "com.zeiglerstudios.glassgauge.helper"
+    private let helperBundleFilename = "com.zeiglerstudios.glassgauge.helper"
     private let logger = Logger(subsystem: "com.zeiglerstudios.glassgauge", category: "SMBlessedHelper")
     
     // Add a flag to prevent multiple simultaneous installation attempts
@@ -372,9 +373,9 @@ class SMBlessedHelperManager {
         // Get main bundle path
         let mainBundlePath = Bundle.main.bundlePath
         
-        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/GlassGaugeHelper.app"
+        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/\(helperBundleFilename)"
         let helperInfoPlistPath = "\(helperPath)/Contents/Info.plist"
-        let helperExecutablePath = "\(helperPath)/Contents/MacOS/GlassGaugeHelper"
+        let helperExecutablePath = "\(helperPath)/Contents/MacOS/\(helperBundleFilename)"
         
         // Check if helper bundle exists
         let helperExists = FileManager.default.fileExists(atPath: helperPath)

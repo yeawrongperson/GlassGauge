@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD39B3822E41C788002528F7 /* GlassGaugeHelper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+               AD39B3822E41C788002528F7 /* com.zeiglerstudios.glassgauge.helper in CopyFiles */ = {isa = PBXBuildFile; fileRef = ADC74FF62E41BFD200529841 /* com.zeiglerstudios.glassgauge.helper */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,9 +40,9 @@
 			buildActionMask = 2147483647;
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
-			files = (
-				AD39B3822E41C788002528F7 /* GlassGaugeHelper.app in CopyFiles */,
-			);
+                       files = (
+                               AD39B3822E41C788002528F7 /* com.zeiglerstudios.glassgauge.helper in CopyFiles */,
+                       );
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -54,7 +54,7 @@
 		AD42F4792E3FD0F5003B6240 /* GlassGauge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = GlassGauge.xcodeproj; sourceTree = "<group>"; };
 		ADC74F732E41880200529841 /* GlassGaugeHelper2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeHelper2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADC74F7D2E41880200529841 /* GlassGaugeHelper2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeHelper2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GlassGaugeHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+               ADC74FF62E41BFD200529841 /* com.zeiglerstudios.glassgauge.helper */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = com.zeiglerstudios.glassgauge.helper; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -180,7 +180,7 @@
 				AD2C99492E3E770F0068AF6D /* GlassGaugeUITests.xctest */,
 				ADC74F732E41880200529841 /* GlassGaugeHelper2Tests.xctest */,
 				ADC74F7D2E41880200529841 /* GlassGaugeHelper2UITests.xctest */,
-				ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */,
+                               ADC74FF62E41BFD200529841 /* com.zeiglerstudios.glassgauge.helper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -327,8 +327,8 @@
 			name = GlassGaugeHelper;
 			packageProductDependencies = (
 			);
-			productName = GlassGaugeHelper;
-			productReference = ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */;
+                       productName = com.zeiglerstudios.glassgauge.helper;
+                       productReference = ADC74FF62E41BFD200529841 /* com.zeiglerstudios.glassgauge.helper */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -653,8 +653,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+                               PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
+                               PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -689,8 +689,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+                               PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
+                               PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -859,8 +859,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge.helper;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+                               PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge.helper;
+                               PRODUCT_NAME = com.zeiglerstudios.glassgauge.helper;
+                               WRAPPER_EXTENSION = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
@@ -892,8 +893,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge.helper;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+                               PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge.helper;
+                               PRODUCT_NAME = com.zeiglerstudios.glassgauge.helper;
+                               WRAPPER_EXTENSION = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;

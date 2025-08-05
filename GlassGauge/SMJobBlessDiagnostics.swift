@@ -51,13 +51,13 @@ class SMJobBlessDiagnostics {
                 print("📁 LaunchServices contents: \(contents)")
                 
                 // Look for helper
-                let helperExists = contents.contains { $0.contains("GlassGaugeHelper") }
+                let helperExists = contents.contains { $0.contains("com.zeiglerstudios.glassgauge.helper") }
                 if helperExists {
                     print("✅ Helper found in LaunchServices")
                     
                     // Check helper structure
                     for item in contents {
-                        if item.contains("GlassGaugeHelper") {
+                        if item.contains("com.zeiglerstudios.glassgauge.helper") {
                             let helperPath = "\(launchServicesPath)/\(item)"
                             checkHelperStructure(at: helperPath)
                         }
@@ -129,7 +129,7 @@ class SMJobBlessDiagnostics {
             if fileManager.fileExists(atPath: searchPath) {
                 do {
                     let contents = try fileManager.contentsOfDirectory(atPath: searchPath)
-                    let helperItems = contents.filter { $0.contains("GlassGaugeHelper") || $0.contains("Helper") }
+                    let helperItems = contents.filter { $0.contains("com.zeiglerstudios.glassgauge.helper") || $0.contains("Helper") }
                     if !helperItems.isEmpty {
                         print("  🔍 Found helper-related items in \(searchPath): \(helperItems)")
                     }
@@ -242,9 +242,9 @@ class SMJobBlessDiagnostics {
         let mainBundlePath = Bundle.main.bundlePath
         
         let possiblePaths = [
-            "\(mainBundlePath)/Contents/Library/LaunchServices/GlassGaugeHelper.app",
-            "\(mainBundlePath)/Contents/Resources/GlassGaugeHelper.app",
-            "\(mainBundlePath)/Contents/Helpers/GlassGaugeHelper.app"
+            "\(mainBundlePath)/Contents/Library/LaunchServices/com.zeiglerstudios.glassgauge.helper",
+            "\(mainBundlePath)/Contents/Resources/com.zeiglerstudios.glassgauge.helper",
+            "\(mainBundlePath)/Contents/Helpers/com.zeiglerstudios.glassgauge.helper"
         ]
         
         let fileManager = FileManager.default
@@ -638,7 +638,7 @@ extension SMJobBlessDiagnostics {
         print("🔏 === DETAILED CODE SIGNING ANALYSIS ===")
         
         let mainBundlePath = Bundle.main.bundlePath
-        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/GlassGaugeHelper.app"
+        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/com.zeiglerstudios.glassgauge.helper"
         
         print("🔍 Main app: \(mainBundlePath)")
         print("🔍 Helper: \(helperPath)")
