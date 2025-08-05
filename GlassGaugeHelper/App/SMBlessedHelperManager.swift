@@ -383,9 +383,9 @@ class SMBlessedHelperManager {
         // Get main bundle path
         let mainBundlePath = Bundle.main.bundlePath
         
-        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/\(helperBundleFilename)"
+        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/\(self.helperBundleFilename)"
         let helperInfoPlistPath = "\(helperPath)/Contents/Info.plist"
-        let helperExecutablePath = "\(helperPath)/Contents/MacOS/\(helperBundleFilename)"
+        let helperExecutablePath = "\(helperPath)/Contents/MacOS/\(self.helperBundleFilename)"
         
         // Check if helper bundle exists
         let helperExists = FileManager.default.fileExists(atPath: helperPath)
@@ -421,8 +421,8 @@ class SMBlessedHelperManager {
             return NSError(domain: "SMJobBless", code: -1, userInfo: [NSLocalizedDescriptionKey: "Helper bundle identifier not found"])
         }
         
-        if helperBundleID != helperBundleFilename {
-            logger.error("❌ Helper bundle identifier mismatch: expected '\(helperBundleFilename)', got '\(helperBundleID)'")
+        if helperBundleID != self.helperBundleFilename {
+            logger.error("❌ Helper bundle identifier mismatch: expected '\(self.helperBundleFilename)', got '\(helperBundleID)'")
             return NSError(domain: "SMJobBless", code: -1, userInfo: [NSLocalizedDescriptionKey: "Helper bundle identifier mismatch"])
         }
         
