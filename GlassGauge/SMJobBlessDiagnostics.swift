@@ -2,6 +2,8 @@ import Foundation
 import ServiceManagement
 import Security
 
+private let helperExecutableName = SMBlessedHelperManager.helperExecutableName
+
 class SMJobBlessDiagnostics {
     
     static func runCompleteDiagnostics() {
@@ -51,13 +53,13 @@ class SMJobBlessDiagnostics {
                 print("📁 LaunchServices contents: \(contents)")
                 
                 // Look for helper
-                let helperExists = contents.contains { $0.contains("com.zeiglerstudios.glassgauge.helper") }
+                let helperExists = contents.contains { $0.contains(helperExecutableName) }
                 if helperExists {
                     print("✅ Helper found in LaunchServices")
                     
                     // Check helper structure
                     for item in contents {
-                        if item.contains("com.zeiglerstudios.glassgauge.helper") {
+                        if item.contains(helperExecutableName) {
                             let helperPath = "\(launchServicesPath)/\(item)"
                             checkHelperStructure(at: helperPath)
                         }
@@ -129,7 +131,7 @@ class SMJobBlessDiagnostics {
             if fileManager.fileExists(atPath: searchPath) {
                 do {
                     let contents = try fileManager.contentsOfDirectory(atPath: searchPath)
-                    let helperItems = contents.filter { $0.contains("com.zeiglerstudios.glassgauge.helper") || $0.contains("Helper") }
+                let helperItems = contents.filter { $0.contains(helperExecutableName) || $0.contains("Helper") }
                     if !helperItems.isEmpty {
                         print("  🔍 Found helper-related items in \(searchPath): \(helperItems)")
                     }
@@ -242,9 +244,9 @@ class SMJobBlessDiagnostics {
         let mainBundlePath = Bundle.main.bundlePath
         
         let possiblePaths = [
-            "\(mainBundlePath)/Contents/Library/LaunchServices/com.zeiglerstudios.glassgauge.helper",
-            "\(mainBundlePath)/Contents/Resources/com.zeiglerstudios.glassgauge.helper",
-            "\(mainBundlePath)/Contents/Helpers/com.zeiglerstudios.glassgauge.helper"
+            "\(mainBundlePath)/Contents/Library/LaunchServices/\(helperExecutableName)",
+            "\(mainBundlePath)/Contents/Resources/\(helperExecutableName)",
+            "\(mainBundlePath)/Contents/Helpers/\(helperExecutableName)"
         ]
         
         let fileManager = FileManager.default
@@ -339,7 +341,7 @@ class SMJobBlessDiagnostics {
     static func checkLaunchdState() {
         print("🚀 === LAUNCHD STATE CHECK ===")
         
-        let helperID = "com.zeiglerstudios.glassgauge.helper"
+        let helperID = helperExecutableName
         
         // Check if helper is currently loaded
         let process = Process()
@@ -460,7 +462,7 @@ class SMJobBlessDiagnostics {
     static func testSMJobBlessWithDetails() {
         print("🚀 === DETAILED SMJOBBLESS TEST ===")
         
-        let helperID = "com.zeiglerstudios.glassgauge.helper"
+        let helperID = helperExecutableName
         
         var authRef: AuthorizationRef?
         let authStatus = AuthorizationCreate(nil, nil, [], &authRef)
@@ -638,7 +640,7 @@ extension SMJobBlessDiagnostics {
         print("🔏 === DETAILED CODE SIGNING ANALYSIS ===")
         
         let mainBundlePath = Bundle.main.bundlePath
-        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/com.zeiglerstudios.glassgauge.helper"
+        let helperPath = "\(mainBundlePath)/Contents/Library/LaunchServices/\(helperExecutableName)"
         
         print("🔍 Main app: \(mainBundlePath)")
         print("🔍 Helper: \(helperPath)")
@@ -700,7 +702,7 @@ extension SMJobBlessDiagnostics {
     static func testDirectLaunchdRegistration() {
         print("🚀 === TESTING DIRECT LAUNCHD REGISTRATION ===")
         
-        let helperID = "com.zeiglerstudios.glassgauge.helper"
+        let helperID = helperExecutableName
         
         print("🔍 Attempting to register helper directly with launchd...")
         
