@@ -2,9 +2,27 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- Temporarily disable sandbox for SMC access -->
-    <!-- <key>com.apple.security.app-sandbox</key>
-    <true/> -->
+    <!-- Allow outgoing network connections for system monitoring -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    
+    <!-- Allow reading system information and hardware sensors -->
+    <key>com.apple.security.device.hardware</key>
+    <true/>
+    
+    <!-- Allow privileged helper management -->
+    <key>com.apple.security.authorization</key>
+    <true/>
+    
+    <!-- Disable App Sandbox for system monitoring app -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+    
+    <!-- Allow XPC service connections -->
+    <key>com.apple.security.network.server</key>
+    <true/>
+    
+    <!-- Allow reading system metrics -->
     <key>com.apple.security.files.user-selected.read-only</key>
     <true/>
 </dict>

@@ -8,11 +8,11 @@ struct GlassGaugeApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(appState)
-                .frame(minWidth: 1200, minHeight: 700) // Increased minimum window size
+                .frame(minWidth: 1200, minHeight: 700)
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unifiedCompact)
-        .defaultSize(width: 1400, height: 900) // Set a comfortable default size
+        .defaultSize(width: 1400, height: 900)
 
         Settings {
             SettingsView()

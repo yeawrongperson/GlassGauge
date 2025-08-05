@@ -23,11 +23,35 @@ final class AppState: ObservableObject {
     
     @Published var pinnedIDs: Set<UUID> = []
     
+    // Enhanced sensor data from blessed helper
+    @Published var hasPrivilegedAccess = false
+    @Published var realSensorData: RealSensorData = RealSensorData()
+    
     private var timer: Timer?
     private let monitor = SystemMonitor()
     
     init() {
         startPolling()
+        checkPrivilegedAccess()
+    }
+    
+    // In AppState.swift, update the checkPrivilegedAccess method:
+    private func checkPrivilegedAccess() {
+        // Don't check during app init - do it asynchronously
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            SMBlessedHelperManager.shared.ensureBlessedAndConnect { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success:
+                        self.hasPrivilegedAccess = true
+                        print("✅ Privileged access available")
+                    case .failure:
+                        self.hasPrivilegedAccess = false
+                        print("❌ No privileged access")
+                    }
+                }
+            }
+        }
     }
     
     func startPolling() {
@@ -48,6 +72,11 @@ final class AppState: ObservableObject {
     
     private func tick() {
         let s = monitor.sample()
+        
+        // Update privileged sensor data if available
+        if hasPrivilegedAccess {
+            updatePrivilegedSensorData()
+        }
         
         // Update all primary metrics
         push(cpu, value: s.cpu)
@@ -85,35 +114,45 @@ final class AppState: ObservableObject {
         }
         
         push(battery, value: s.battery)
-        push(fans, value: s.fans)
+        
+        // Use privileged fan data if available, otherwise use estimated
+        let fanRPM = realSensorData.fanSpeed ?? s.fans
+        push(fans, value: fanRPM)
         
         // Calculate and update average temperature for Temps tab
-        let validTemps = [s.cpuTemp, s.gpuTemp, s.diskTemp].filter { $0 > 0 }
+        let cpuTemp = realSensorData.cpuTemp ?? s.cpuTemp
+        let gpuTemp = realSensorData.gpuTemp ?? s.gpuTemp
+        let diskTemp = realSensorData.diskTemp ?? s.diskTemp
+        
+        let validTemps = [cpuTemp, gpuTemp, diskTemp].filter { $0 > 0 }
         let avgTemp = validTemps.isEmpty ? 0 : validTemps.reduce(0, +) / Double(validTemps.count)
         push(temps, value: avgTemp)
         
         // Update CPU temperature and secondary info
-        if s.cpuTemp > 0 {
-            cpu.secondary = "\(Int(s.cpuTemp))°C • \(temperatureBadge(for: s.cpuTemp))"
-            cpu.accent = accentColor(for: s.cpuTemp)
+        if cpuTemp > 0 {
+            let tempLabel = hasPrivilegedAccess ? "\(Int(cpuTemp))°C" : "~\(Int(cpuTemp))°C"
+            cpu.secondary = "\(tempLabel) • \(temperatureBadge(for: cpuTemp))"
+            cpu.accent = accentColor(for: cpuTemp)
         } else {
-            cpu.secondary = "Estimated Temperature"
+            cpu.secondary = "Temperature Unknown"
             cpu.accent = .gray
         }
         
         // Update GPU temperature and secondary info
-        if s.gpuTemp > 0 {
-            gpu.secondary = "\(Int(s.gpuTemp))°C • \(temperatureBadge(for: s.gpuTemp))"
-            gpu.accent = accentColor(for: s.gpuTemp)
+        if gpuTemp > 0 {
+            let tempLabel = hasPrivilegedAccess ? "\(Int(gpuTemp))°C" : "~\(Int(gpuTemp))°C"
+            gpu.secondary = "\(tempLabel) • \(temperatureBadge(for: gpuTemp))"
+            gpu.accent = accentColor(for: gpuTemp)
         } else {
-            gpu.secondary = "Estimated Temperature"
+            gpu.secondary = "Temperature Unknown"
             gpu.accent = .gray
         }
         
         // Update disk temperature and secondary info
-        if s.diskTemp > 0 {
-            disk.secondary = "\(Int(s.diskTemp))°C • \(temperatureBadge(for: s.diskTemp))"
-            disk.accent = accentColor(for: s.diskTemp)
+        if diskTemp > 0 {
+            let tempLabel = hasPrivilegedAccess ? "\(Int(diskTemp))°C" : "~\(Int(diskTemp))°C"
+            disk.secondary = "\(tempLabel) • \(temperatureBadge(for: diskTemp))"
+            disk.accent = accentColor(for: diskTemp)
         } else {
             disk.secondary = "No Sensor Available"
             disk.accent = .gray
@@ -124,12 +163,11 @@ final class AppState: ObservableObject {
         
         // Update overall temperature metric secondary info
         if validTemps.count > 0 {
-            let tempStrings = [
-                s.cpuTemp > 0 ? "CPU: \(Int(s.cpuTemp))°" : nil,
-                s.gpuTemp > 0 ? "GPU: \(Int(s.gpuTemp))°" : nil,
-                s.diskTemp > 0 ? "Disk: \(Int(s.diskTemp))°" : nil
-            ].compactMap { $0 }
+            let cpuLabel = cpuTemp > 0 ? "CPU: \(Int(cpuTemp))°" : nil
+            let gpuLabel = gpuTemp > 0 ? "GPU: \(Int(gpuTemp))°" : nil
+            let diskLabel = diskTemp > 0 ? "Disk: \(Int(diskTemp))°" : nil
             
+            let tempStrings = [cpuLabel, gpuLabel, diskLabel].compactMap { $0 }
             temps.secondary = tempStrings.joined(separator: " • ")
             temps.accent = accentColor(for: avgTemp)
         } else {
@@ -164,12 +202,24 @@ final class AppState: ObservableObject {
         memory.secondary = "Usage: \(String(format: "%.1f", memoryPercent))% of \(String(format: "%.0f", getTotalMemory())) GB"
         memory.accent = memoryPercent > 80 ? .orange : (memoryPercent > 90 ? .red : .primary)
         
-        // Update fans secondary info
-        if s.fans > 0 {
-            fans.secondary = "Fan Speed: \(Int(s.fans)) RPM"
-            fans.accent = s.fans > 3000 ? .orange : (s.fans > 4000 ? .red : .primary)
+        // Update fans secondary info with comprehensive status
+        if fanRPM > 0 {
+            let displayRPM = Int(fanRPM)
+            let statusLabel = hasPrivilegedAccess ? "\(displayRPM) RPM" : "~\(displayRPM) RPM (estimated)"
+            fans.secondary = statusLabel
+            
+            // Color based on fan speed ranges for Intel MacBook Pro
+            if fanRPM > 4500 {
+                fans.accent = .red
+            } else if fanRPM > 3500 {
+                fans.accent = .orange
+            } else if fanRPM > 2500 {
+                fans.accent = .yellow
+            } else {
+                fans.accent = .primary
+            }
         } else {
-            fans.secondary = "Fan Information Unavailable"
+            fans.secondary = hasPrivilegedAccess ? "No fan sensors detected" : "Fan sensors require elevated access"
             fans.accent = .gray
         }
         
@@ -185,17 +235,79 @@ final class AppState: ObservableObject {
         } else {
             power.secondary = "Power Information Unavailable"
             power.accent = .gray
-            push(power, value: 0)
         }
         
         // Update GPU secondary info with more details
         if s.gpu > 0 {
-            let gpuSecondary = s.gpuTemp > 0 ?
-            "\(Int(s.gpuTemp))°C • \(temperatureBadge(for: s.gpuTemp)) • \(String(format: "%.1f", s.gpu))% Load" :
+            let gpuSecondary = gpuTemp > 0 ?
+            "\(Int(gpuTemp))°C • \(temperatureBadge(for: gpuTemp)) • \(String(format: "%.1f", s.gpu))% Load" :
             "Load: \(String(format: "%.1f", s.gpu))%"
             gpu.secondary = gpuSecondary
-            gpu.accent = s.gpu > 80 ? .orange : (s.gpu > 90 ? .red : accentColor(for: s.gpuTemp))
+            gpu.accent = s.gpu > 80 ? .orange : (s.gpu > 90 ? .red : accentColor(for: gpuTemp))
         }
+    }
+    
+    private func updatePrivilegedSensorData() {
+        // Fetch real sensor data from blessed helper in background
+        Task.detached { [weak self] in
+            guard let self = self else { return }
+            
+            // Get fan speed
+            SMBlessedHelperManager.shared.runPowermetrics(arguments: ["--samplers", "smc", "-n", "1", "-i", "200"]) { exitCode, output in
+                if exitCode == 0 && !output.isEmpty {
+                    DispatchQueue.main.async {
+                        self.parsePrivilegedSensorData(output)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func parsePrivilegedSensorData(_ output: String) {
+        let lines = output.components(separatedBy: .newlines)
+        
+        for line in lines {
+            let lineLower = line.lowercased()
+            
+            // Parse fan speed
+            if lineLower.contains("fan") && lineLower.contains("rpm") {
+                if let rpm = extractNumber(from: line, pattern: #"(\d+\.?\d*)\s*rpm"#) {
+                    realSensorData.fanSpeed = rpm
+                }
+            }
+            
+            // Parse CPU temperature
+            if lineLower.contains("cpu") && lineLower.contains("temp") {
+                if let temp = extractNumber(from: line, pattern: #"(\d+\.?\d*)\s*°?c"#) {
+                    realSensorData.cpuTemp = temp
+                }
+            }
+            
+            // Parse GPU temperature
+            if lineLower.contains("gpu") && lineLower.contains("temp") {
+                if let temp = extractNumber(from: line, pattern: #"(\d+\.?\d*)\s*°?c"#) {
+                    realSensorData.gpuTemp = temp
+                }
+            }
+            
+            // Parse disk temperature
+            if (lineLower.contains("disk") || lineLower.contains("ssd")) && lineLower.contains("temp") {
+                if let temp = extractNumber(from: line, pattern: #"(\d+\.?\d*)\s*°?c"#) {
+                    realSensorData.diskTemp = temp
+                }
+            }
+        }
+    }
+    
+    private func extractNumber(from text: String, pattern: String) -> Double? {
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              let range = Range(match.range(at: 1), in: text) else {
+            return nil
+        }
+        
+        let numberStr = String(text[range])
+        return Double(numberStr)
     }
     
     private func getTotalMemory() -> Double {
@@ -228,4 +340,15 @@ final class AppState: ObservableObject {
         default: return "critical"
         }
     }
+}
+
+// MARK: - Real Sensor Data Model
+class RealSensorData: ObservableObject {
+    @Published var fanSpeed: Double?
+    @Published var cpuTemp: Double?
+    @Published var gpuTemp: Double?
+    @Published var diskTemp: Double?
+    
+    var hasFanData: Bool { fanSpeed != nil }
+    var hasTempData: Bool { cpuTemp != nil || gpuTemp != nil || diskTemp != nil }
 }

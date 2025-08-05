@@ -6,63 +6,150 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AD39B3822E41C788002528F7 /* GlassGaugeHelper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
-		AD2C98B12E3E67DA0068AF6D /* PBXContainerItemProxy */ = {
+		AD2C99402E3E770F0068AF6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = AD2C98982E3E67D70068AF6D /* Project object */;
+			containerPortal = AD2C99272E3E770C0068AF6D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AD2C989F2E3E67D70068AF6D;
+			remoteGlobalIDString = AD2C992E2E3E770C0068AF6D;
 			remoteInfo = GlassGauge;
 		};
-		AD2C98BB2E3E67DA0068AF6D /* PBXContainerItemProxy */ = {
+		AD2C994A2E3E770F0068AF6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = AD2C98982E3E67D70068AF6D /* Project object */;
+			containerPortal = AD2C99272E3E770C0068AF6D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AD2C989F2E3E67D70068AF6D;
+			remoteGlobalIDString = AD2C992E2E3E770C0068AF6D;
 			remoteInfo = GlassGauge;
+		};
+		ADC750152E41C20100529841 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AD2C99272E3E770C0068AF6D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ADC74FF52E41BFD200529841;
+			remoteInfo = GlassGaugeHelper;
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		AD39B37F2E41C52A002528F7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				AD39B3822E41C788002528F7 /* GlassGaugeHelper.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		AD2C98A02E3E67D70068AF6D /* GlassGauge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GlassGauge.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AD2C98B02E3E67DA0068AF6D /* GlassGaugeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AD2C98BA2E3E67DA0068AF6D /* GlassGaugeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD2C992F2E3E770C0068AF6D /* GlassGauge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GlassGauge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD2C993F2E3E770F0068AF6D /* GlassGaugeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD2C99492E3E770F0068AF6D /* GlassGaugeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD42F4792E3FD0F5003B6240 /* GlassGauge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = GlassGauge.xcodeproj; sourceTree = "<group>"; };
+		ADC74F732E41880200529841 /* GlassGaugeHelper2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeHelper2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADC74F7D2E41880200529841 /* GlassGaugeHelper2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlassGaugeHelper2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GlassGaugeHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		AD2C98A22E3E67D70068AF6D /* GlassGauge */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = GlassGauge;
-			sourceTree = "<group>";
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		ADC7500D2E41BFFE00529841 /* Exceptions for "GlassGaugeHelper" folder in "GlassGauge" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/SMBlessedHelperManager.swift,
+				Shared/GlassGaugeHelperProtocol.swift,
+			);
+			target = AD2C992E2E3E770C0068AF6D /* GlassGauge */;
 		};
-		AD2C98B32E3E67DA0068AF6D /* GlassGaugeTests */ = {
+		ADC7500E2E41BFFE00529841 /* Exceptions for "GlassGaugeHelper" folder in "GlassGaugeHelper" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/SMBlessedHelperManager.swift,
+				Info.plist,
+			);
+			target = ADC74FF52E41BFD200529841 /* GlassGaugeHelper */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		AD2C99422E3E770F0068AF6D /* GlassGaugeTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = GlassGaugeTests;
 			sourceTree = "<group>";
 		};
-		AD2C98BD2E3E67DA0068AF6D /* GlassGaugeUITests */ = {
+		AD2C994C2E3E770F0068AF6D /* GlassGaugeUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = GlassGaugeUITests;
+			sourceTree = "<group>";
+		};
+		ADC74EE12E41281400529841 /* GlassGauge */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GlassGauge;
+			sourceTree = "<group>";
+		};
+		ADC74F762E41880200529841 /* GlassGaugeHelper2Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GlassGaugeHelper2Tests;
+			sourceTree = "<group>";
+		};
+		ADC74F802E41880200529841 /* GlassGaugeHelper2UITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GlassGaugeHelper2UITests;
+			sourceTree = "<group>";
+		};
+		ADC74FF72E41BFD200529841 /* GlassGaugeHelper */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ADC7500D2E41BFFE00529841 /* Exceptions for "GlassGaugeHelper" folder in "GlassGauge" target */,
+				ADC7500E2E41BFFE00529841 /* Exceptions for "GlassGaugeHelper" folder in "GlassGaugeHelper" target */,
+			);
+			path = GlassGaugeHelper;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		AD2C989D2E3E67D70068AF6D /* Frameworks */ = {
+		AD2C992C2E3E770C0068AF6D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD2C98AD2E3E67DA0068AF6D /* Frameworks */ = {
+		AD2C993C2E3E770F0068AF6D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD2C98B72E3E67DA0068AF6D /* Frameworks */ = {
+		AD2C99462E3E770F0068AF6D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74F702E41880200529841 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74F7A2E41880200529841 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74FF32E41BFD200529841 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +159,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AD2C98972E3E67D70068AF6D = {
+		AD2C99262E3E770C0068AF6D = {
 			isa = PBXGroup;
 			children = (
-				AD2C98A22E3E67D70068AF6D /* GlassGauge */,
-				AD2C98B32E3E67DA0068AF6D /* GlassGaugeTests */,
-				AD2C98BD2E3E67DA0068AF6D /* GlassGaugeUITests */,
-				AD2C98A12E3E67D70068AF6D /* Products */,
+				ADC74EE12E41281400529841 /* GlassGauge */,
+				AD2C99422E3E770F0068AF6D /* GlassGaugeTests */,
+				AD2C994C2E3E770F0068AF6D /* GlassGaugeUITests */,
+				ADC74F762E41880200529841 /* GlassGaugeHelper2Tests */,
+				ADC74F802E41880200529841 /* GlassGaugeHelper2UITests */,
+				ADC74FF72E41BFD200529841 /* GlassGaugeHelper */,
+				AD2C99302E3E770C0068AF6D /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		AD2C98A12E3E67D70068AF6D /* Products */ = {
+		AD2C99302E3E770C0068AF6D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AD2C98A02E3E67D70068AF6D /* GlassGauge.app */,
-				AD2C98B02E3E67DA0068AF6D /* GlassGaugeTests.xctest */,
-				AD2C98BA2E3E67DA0068AF6D /* GlassGaugeUITests.xctest */,
+				AD2C992F2E3E770C0068AF6D /* GlassGauge.app */,
+				AD2C993F2E3E770F0068AF6D /* GlassGaugeTests.xctest */,
+				AD2C99492E3E770F0068AF6D /* GlassGaugeUITests.xctest */,
+				ADC74F732E41880200529841 /* GlassGaugeHelper2Tests.xctest */,
+				ADC74F7D2E41880200529841 /* GlassGaugeHelper2UITests.xctest */,
+				ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AD42F4872E3FD0F5003B6240 /* Products */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +195,243 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AD2C989F2E3E67D70068AF6D /* GlassGauge */ = {
+		AD2C992E2E3E770C0068AF6D /* GlassGauge */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AD2C98C42E3E67DA0068AF6D /* Build configuration list for PBXNativeTarget "GlassGauge" */;
+			buildConfigurationList = AD2C99532E3E770F0068AF6D /* Build configuration list for PBXNativeTarget "GlassGauge" */;
 			buildPhases = (
-				AD2C989C2E3E67D70068AF6D /* Sources */,
-				AD2C989D2E3E67D70068AF6D /* Frameworks */,
-				AD2C989E2E3E67D70068AF6D /* Resources */,
+				AD2C992B2E3E770C0068AF6D /* Sources */,
+				AD2C992C2E3E770C0068AF6D /* Frameworks */,
+				AD2C992D2E3E770C0068AF6D /* Resources */,
+				AD39B37F2E41C52A002528F7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				ADC750162E41C20100529841 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AD2C98A22E3E67D70068AF6D /* GlassGauge */,
+				ADC74EE12E41281400529841 /* GlassGauge */,
 			);
 			name = GlassGauge;
 			packageProductDependencies = (
 			);
 			productName = GlassGauge;
-			productReference = AD2C98A02E3E67D70068AF6D /* GlassGauge.app */;
+			productReference = AD2C992F2E3E770C0068AF6D /* GlassGauge.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AD2C98AF2E3E67DA0068AF6D /* GlassGaugeTests */ = {
+		AD2C993E2E3E770F0068AF6D /* GlassGaugeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AD2C98C72E3E67DA0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeTests" */;
+			buildConfigurationList = AD2C99562E3E770F0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeTests" */;
 			buildPhases = (
-				AD2C98AC2E3E67DA0068AF6D /* Sources */,
-				AD2C98AD2E3E67DA0068AF6D /* Frameworks */,
-				AD2C98AE2E3E67DA0068AF6D /* Resources */,
+				AD2C993B2E3E770F0068AF6D /* Sources */,
+				AD2C993C2E3E770F0068AF6D /* Frameworks */,
+				AD2C993D2E3E770F0068AF6D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				AD2C98B22E3E67DA0068AF6D /* PBXTargetDependency */,
+				AD2C99412E3E770F0068AF6D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AD2C98B32E3E67DA0068AF6D /* GlassGaugeTests */,
+				AD2C99422E3E770F0068AF6D /* GlassGaugeTests */,
 			);
 			name = GlassGaugeTests;
 			packageProductDependencies = (
 			);
 			productName = GlassGaugeTests;
-			productReference = AD2C98B02E3E67DA0068AF6D /* GlassGaugeTests.xctest */;
+			productReference = AD2C993F2E3E770F0068AF6D /* GlassGaugeTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		AD2C98B92E3E67DA0068AF6D /* GlassGaugeUITests */ = {
+		AD2C99482E3E770F0068AF6D /* GlassGaugeUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AD2C98CA2E3E67DA0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeUITests" */;
+			buildConfigurationList = AD2C99592E3E770F0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeUITests" */;
 			buildPhases = (
-				AD2C98B62E3E67DA0068AF6D /* Sources */,
-				AD2C98B72E3E67DA0068AF6D /* Frameworks */,
-				AD2C98B82E3E67DA0068AF6D /* Resources */,
+				AD2C99452E3E770F0068AF6D /* Sources */,
+				AD2C99462E3E770F0068AF6D /* Frameworks */,
+				AD2C99472E3E770F0068AF6D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				AD2C98BC2E3E67DA0068AF6D /* PBXTargetDependency */,
+				AD2C994B2E3E770F0068AF6D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AD2C98BD2E3E67DA0068AF6D /* GlassGaugeUITests */,
+				AD2C994C2E3E770F0068AF6D /* GlassGaugeUITests */,
 			);
 			name = GlassGaugeUITests;
 			packageProductDependencies = (
 			);
 			productName = GlassGaugeUITests;
-			productReference = AD2C98BA2E3E67DA0068AF6D /* GlassGaugeUITests.xctest */;
+			productReference = AD2C99492E3E770F0068AF6D /* GlassGaugeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		ADC74F722E41880200529841 /* GlassGaugeHelper2Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADC74F882E41880200529841 /* Build configuration list for PBXNativeTarget "GlassGaugeHelper2Tests" */;
+			buildPhases = (
+				ADC74F6F2E41880200529841 /* Sources */,
+				ADC74F702E41880200529841 /* Frameworks */,
+				ADC74F712E41880200529841 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ADC74F762E41880200529841 /* GlassGaugeHelper2Tests */,
+			);
+			name = GlassGaugeHelper2Tests;
+			packageProductDependencies = (
+			);
+			productName = GlassGaugeHelper2Tests;
+			productReference = ADC74F732E41880200529841 /* GlassGaugeHelper2Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		ADC74F7C2E41880200529841 /* GlassGaugeHelper2UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADC74F8B2E41880200529841 /* Build configuration list for PBXNativeTarget "GlassGaugeHelper2UITests" */;
+			buildPhases = (
+				ADC74F792E41880200529841 /* Sources */,
+				ADC74F7A2E41880200529841 /* Frameworks */,
+				ADC74F7B2E41880200529841 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ADC74F802E41880200529841 /* GlassGaugeHelper2UITests */,
+			);
+			name = GlassGaugeHelper2UITests;
+			packageProductDependencies = (
+			);
+			productName = GlassGaugeHelper2UITests;
+			productReference = ADC74F7D2E41880200529841 /* GlassGaugeHelper2UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		ADC74FF52E41BFD200529841 /* GlassGaugeHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADC750012E41BFD500529841 /* Build configuration list for PBXNativeTarget "GlassGaugeHelper" */;
+			buildPhases = (
+				ADC74FF22E41BFD200529841 /* Sources */,
+				ADC74FF32E41BFD200529841 /* Frameworks */,
+				ADC74FF42E41BFD200529841 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ADC74FF72E41BFD200529841 /* GlassGaugeHelper */,
+			);
+			name = GlassGaugeHelper;
+			packageProductDependencies = (
+			);
+			productName = GlassGaugeHelper;
+			productReference = ADC74FF62E41BFD200529841 /* GlassGaugeHelper.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		AD2C98982E3E67D70068AF6D /* Project object */ = {
+		AD2C99272E3E770C0068AF6D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
-					AD2C989F2E3E67D70068AF6D = {
+					AD2C992E2E3E770C0068AF6D = {
 						CreatedOnToolsVersion = 16.4;
 					};
-					AD2C98AF2E3E67DA0068AF6D = {
+					AD2C993E2E3E770F0068AF6D = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = AD2C989F2E3E67D70068AF6D;
+						TestTargetID = AD2C992E2E3E770C0068AF6D;
 					};
-					AD2C98B92E3E67DA0068AF6D = {
+					AD2C99482E3E770F0068AF6D = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = AD2C989F2E3E67D70068AF6D;
+						TestTargetID = AD2C992E2E3E770C0068AF6D;
+					};
+					ADC74F722E41880200529841 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = ADC74F632E4187FF00529841;
+					};
+					ADC74F7C2E41880200529841 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = ADC74F632E4187FF00529841;
+					};
+					ADC74FF52E41BFD200529841 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
-			buildConfigurationList = AD2C989B2E3E67D70068AF6D /* Build configuration list for PBXProject "GlassGauge" */;
+			buildConfigurationList = AD2C992A2E3E770C0068AF6D /* Build configuration list for PBXProject "GlassGauge" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = AD2C98972E3E67D70068AF6D;
+			mainGroup = AD2C99262E3E770C0068AF6D;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = AD2C98A12E3E67D70068AF6D /* Products */;
+			productRefGroup = AD2C99302E3E770C0068AF6D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = AD42F4872E3FD0F5003B6240 /* Products */;
+					ProjectRef = AD42F4792E3FD0F5003B6240 /* GlassGauge.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
-				AD2C989F2E3E67D70068AF6D /* GlassGauge */,
-				AD2C98AF2E3E67DA0068AF6D /* GlassGaugeTests */,
-				AD2C98B92E3E67DA0068AF6D /* GlassGaugeUITests */,
+				AD2C992E2E3E770C0068AF6D /* GlassGauge */,
+				AD2C993E2E3E770F0068AF6D /* GlassGaugeTests */,
+				AD2C99482E3E770F0068AF6D /* GlassGaugeUITests */,
+				ADC74F722E41880200529841 /* GlassGaugeHelper2Tests */,
+				ADC74F7C2E41880200529841 /* GlassGaugeHelper2UITests */,
+				ADC74FF52E41BFD200529841 /* GlassGaugeHelper */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AD2C989E2E3E67D70068AF6D /* Resources */ = {
+		AD2C992D2E3E770C0068AF6D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD2C98AE2E3E67DA0068AF6D /* Resources */ = {
+		AD2C993D2E3E770F0068AF6D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD2C98B82E3E67DA0068AF6D /* Resources */ = {
+		AD2C99472E3E770F0068AF6D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74F712E41880200529841 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74F7B2E41880200529841 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74FF42E41BFD200529841 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +441,42 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AD2C989C2E3E67D70068AF6D /* Sources */ = {
+		AD2C992B2E3E770C0068AF6D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD2C98AC2E3E67DA0068AF6D /* Sources */ = {
+		AD2C993B2E3E770F0068AF6D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AD2C98B62E3E67DA0068AF6D /* Sources */ = {
+		AD2C99452E3E770F0068AF6D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74F6F2E41880200529841 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74F792E41880200529841 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADC74FF22E41BFD200529841 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +486,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		AD2C98B22E3E67DA0068AF6D /* PBXTargetDependency */ = {
+		AD2C99412E3E770F0068AF6D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AD2C989F2E3E67D70068AF6D /* GlassGauge */;
-			targetProxy = AD2C98B12E3E67DA0068AF6D /* PBXContainerItemProxy */;
+			target = AD2C992E2E3E770C0068AF6D /* GlassGauge */;
+			targetProxy = AD2C99402E3E770F0068AF6D /* PBXContainerItemProxy */;
 		};
-		AD2C98BC2E3E67DA0068AF6D /* PBXTargetDependency */ = {
+		AD2C994B2E3E770F0068AF6D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AD2C989F2E3E67D70068AF6D /* GlassGauge */;
-			targetProxy = AD2C98BB2E3E67DA0068AF6D /* PBXContainerItemProxy */;
+			target = AD2C992E2E3E770C0068AF6D /* GlassGauge */;
+			targetProxy = AD2C994A2E3E770F0068AF6D /* PBXContainerItemProxy */;
+		};
+		ADC750162E41C20100529841 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ADC74FF52E41BFD200529841 /* GlassGaugeHelper */;
+			targetProxy = ADC750152E41C20100529841 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		AD2C98C22E3E67DA0068AF6D /* Debug */ = {
+		AD2C99512E3E770F0068AF6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -322,6 +557,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -333,7 +569,7 @@
 			};
 			name = Debug;
 		};
-		AD2C98C32E3E67DA0068AF6D /* Release */ = {
+		AD2C99522E3E770F0068AF6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -380,6 +616,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -389,65 +626,79 @@
 			};
 			name = Release;
 		};
-		AD2C98C52E3E67DA0068AF6D /* Debug */ = {
+		AD2C99542E3E770F0068AF6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = GlassGauge/GlassGauge.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				DONT_GENERATE_INFOPLIST_FILE = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				"INFOPLIST_FILE[sdk=*]" = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_PREPROCESS = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGauge;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		AD2C98C62E3E67DA0068AF6D /* Release */ = {
+		AD2C99552E3E770F0068AF6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = GlassGauge/GlassGauge.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				DONT_GENERATE_INFOPLIST_FILE = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				"INFOPLIST_FILE[sdk=*]" = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_PREPROCESS = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGauge;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		AD2C98C82E3E67DA0068AF6D /* Debug */ = {
+		AD2C99572E3E770F0068AF6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -457,7 +708,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -465,7 +716,7 @@
 			};
 			name = Debug;
 		};
-		AD2C98C92E3E67DA0068AF6D /* Release */ = {
+		AD2C99582E3E770F0068AF6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -475,7 +726,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -483,7 +734,7 @@
 			};
 			name = Release;
 		};
-		AD2C98CB2E3E67DA0068AF6D /* Debug */ = {
+		AD2C995A2E3E770F0068AF6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -491,7 +742,7 @@
 				DEVELOPMENT_TEAM = 5LX3RLQKZL;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -499,7 +750,7 @@
 			};
 			name = Debug;
 		};
-		AD2C98CC2E3E67DA0068AF6D /* Release */ = {
+		AD2C995B2E3E770F0068AF6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -507,54 +758,217 @@
 				DEVELOPMENT_TEAM = 5LX3RLQKZL;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = GlassGauge;
+			};
+			name = Release;
+		};
+		ADC74F892E41880200529841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeHelper2Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GlassGaugeHelper2.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GlassGaugeHelper2";
+			};
+			name = Debug;
+		};
+		ADC74F8A2E41880200529841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeHelper2Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GlassGaugeHelper2.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GlassGaugeHelper2";
+			};
+			name = Release;
+		};
+		ADC74F8C2E41880200529841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GlassGaugeHelper/Info.plist;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeHelper2UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = GlassGaugeHelper2;
+			};
+			name = Debug;
+		};
+		ADC74F8D2E41880200529841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GlassGaugeHelper/Info.plist;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ZeiglerStudios.GlassGaugeHelper2UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = GlassGaugeHelper2;
+			};
+			name = Release;
+		};
+		ADC750022E41BFD500529841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GlassGaugeHelper/GlassGaugeHelper.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GlassGaugeHelper/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = com.zeiglerstudios.glassgauge.helper;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge.helper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		ADC750032E41BFD500529841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GlassGaugeHelper/GlassGaugeHelper.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5LX3RLQKZL;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GlassGaugeHelper/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = com.zeiglerstudios.glassgauge.helper;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zeiglerstudios.glassgauge.helper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AD2C989B2E3E67D70068AF6D /* Build configuration list for PBXProject "GlassGauge" */ = {
+		AD2C992A2E3E770C0068AF6D /* Build configuration list for PBXProject "GlassGauge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD2C98C22E3E67DA0068AF6D /* Debug */,
-				AD2C98C32E3E67DA0068AF6D /* Release */,
+				AD2C99512E3E770F0068AF6D /* Debug */,
+				AD2C99522E3E770F0068AF6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AD2C98C42E3E67DA0068AF6D /* Build configuration list for PBXNativeTarget "GlassGauge" */ = {
+		AD2C99532E3E770F0068AF6D /* Build configuration list for PBXNativeTarget "GlassGauge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD2C98C52E3E67DA0068AF6D /* Debug */,
-				AD2C98C62E3E67DA0068AF6D /* Release */,
+				AD2C99542E3E770F0068AF6D /* Debug */,
+				AD2C99552E3E770F0068AF6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AD2C98C72E3E67DA0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeTests" */ = {
+		AD2C99562E3E770F0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD2C98C82E3E67DA0068AF6D /* Debug */,
-				AD2C98C92E3E67DA0068AF6D /* Release */,
+				AD2C99572E3E770F0068AF6D /* Debug */,
+				AD2C99582E3E770F0068AF6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AD2C98CA2E3E67DA0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeUITests" */ = {
+		AD2C99592E3E770F0068AF6D /* Build configuration list for PBXNativeTarget "GlassGaugeUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD2C98CB2E3E67DA0068AF6D /* Debug */,
-				AD2C98CC2E3E67DA0068AF6D /* Release */,
+				AD2C995A2E3E770F0068AF6D /* Debug */,
+				AD2C995B2E3E770F0068AF6D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADC74F882E41880200529841 /* Build configuration list for PBXNativeTarget "GlassGaugeHelper2Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADC74F892E41880200529841 /* Debug */,
+				ADC74F8A2E41880200529841 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADC74F8B2E41880200529841 /* Build configuration list for PBXNativeTarget "GlassGaugeHelper2UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADC74F8C2E41880200529841 /* Debug */,
+				ADC74F8D2E41880200529841 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADC750012E41BFD500529841 /* Build configuration list for PBXNativeTarget "GlassGaugeHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADC750022E41BFD500529841 /* Debug */,
+				ADC750032E41BFD500529841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = AD2C98982E3E67D70068AF6D /* Project object */;
+	rootObject = AD2C99272E3E770C0068AF6D /* Project object */;
 }
