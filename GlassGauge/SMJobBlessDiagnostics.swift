@@ -85,21 +85,20 @@ class SMJobBlessDiagnostics {
         print("🔍 Checking helper structure at: \(path)")
         
         let fileManager = FileManager.default
-        
-        // Check if it's a bundle
-        if path.hasSuffix(".app") {
-            let infoPlistPath = "\(path)/Contents/Info.plist"
-            let executablePath = "\(path)/Contents/MacOS"
-            
-            if fileManager.fileExists(atPath: infoPlistPath) {
-                print("  ✅ Helper Info.plist exists")
-            } else {
-                print("  ❌ Helper Info.plist missing")
+
+        let infoPlistPath = "\(path)/Contents/Info.plist"
+        let executablePath = "\(path)/Contents/MacOS"
+
+        if fileManager.fileExists(atPath: infoPlistPath) {
+            print("  ✅ Valid bundle detected (Contents/Info.plist found)")
+
+            if !path.hasSuffix(".app") {
+                print("  ℹ️ Bundle does not use .app extension")
             }
-            
+
             if fileManager.fileExists(atPath: executablePath) {
                 print("  ✅ Helper MacOS directory exists")
-                
+
                 // Check for executable
                 do {
                     let executables = try fileManager.contentsOfDirectory(atPath: executablePath)
@@ -111,7 +110,7 @@ class SMJobBlessDiagnostics {
                 print("  ❌ Helper MacOS directory missing")
             }
         } else {
-            print("  ❌ Helper is not an .app bundle")
+            print("  ❌ No valid bundle found (missing Contents/Info.plist)")
         }
     }
     
