@@ -50,7 +50,7 @@ struct SensorDetailView: View {
                 RuleMark(x: .value("Time", hoverSample.t))
                     .foregroundStyle(.secondary)
                     .annotation(position: .top) {
-                        Text("\(hoverSample.v, specifier: \"%.2f\") \(metric.unit)")
+                        Text("\(hoverSample.v, specifier: "%.2f") \(metric.unit)")
                             .font(.caption)
                             .padding(4)
                             .background(.thinMaterial)
