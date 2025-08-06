@@ -122,7 +122,7 @@ struct NetworkDetailView: View {
                     RuleMark(x: .value("Time", hoverIncoming.t))
                         .foregroundStyle(.secondary)
                         .annotation(position: .top) {
-                            Text("\(hoverIncoming.v, specifier: \"%.0f\") KB/s")
+                            Text("\(hoverIncoming.v, specifier: "%.0f") KB/s")
                                 .font(.caption2)
                                 .padding(4)
                                 .background(.thinMaterial)
@@ -147,7 +147,7 @@ struct NetworkDetailView: View {
                     AxisGridLine()
                     AxisValueLabel {
                         let doubleValue = value.as(Double.self) ?? 0
-                        Text("\(doubleValue, specifier: \"%.0f\")")
+                        Text("\(doubleValue, specifier: "%.0f")")
                             .font(.caption2)
                     }
                 }
@@ -196,7 +196,7 @@ struct NetworkDetailView: View {
                     RuleMark(x: .value("Time", hoverOutgoing.t))
                         .foregroundStyle(.secondary)
                         .annotation(position: .top) {
-                            Text("\(hoverOutgoing.v, specifier: \"%.0f\") KB/s")
+                            Text("\(hoverOutgoing.v, specifier: "%.0f") KB/s")
                                 .font(.caption2)
                                 .padding(4)
                                 .background(.thinMaterial)
@@ -221,7 +221,7 @@ struct NetworkDetailView: View {
                     AxisGridLine()
                     AxisValueLabel {
                         let doubleValue = value.as(Double.self) ?? 0
-                        Text("\(doubleValue, specifier: \"%.0f\")")
+                        Text("\(doubleValue, specifier: "%.0f")")
                             .font(.caption2)
                     }
                 }
