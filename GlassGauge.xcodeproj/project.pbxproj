@@ -450,11 +450,13 @@
                        inputFileListPaths = (
                        );
                        inputPaths = (
+                               "$(BUILT_PRODUCTS_DIR)/$(PRODUCT_NAME).",
                        );
                        name = "Run Script";
                        outputFileListPaths = (
                        );
                        outputPaths = (
+                               "$(BUILT_PRODUCTS_DIR)/com.zeiglerstudios.glassgauge.helper",
                        );
                        runOnlyForDeploymentPostprocessing = 0;
                        shellPath = /bin/sh;
