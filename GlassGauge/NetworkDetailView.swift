@@ -5,8 +5,6 @@ struct NetworkDetailView: View {
     @EnvironmentObject var state: AppState
     @ObservedObject var networkIn: MetricModel
     @ObservedObject var networkOut: MetricModel
-    @State private var hoverIncoming: SamplePoint?
-    @State private var hoverOutgoing: SamplePoint?
 
     var body: some View {
         ScrollView {
@@ -114,26 +112,8 @@ struct NetworkDetailView: View {
                     .foregroundStyle(.green)
             }
             
-            Chart {
-                ForEach(cleanIncomingSamples) { sample in
-                    createSimpleLineMark(sample: sample, color: .green)
-                }
-                if let hoverIncoming {
-                    RuleMark(x: .value("Time", hoverIncoming.t))
-                        .foregroundStyle(.secondary)
-                        .annotation(position: .top) {
-                            Text("\(hoverIncoming.v, specifier: "%.0f") KB/s")
-                                .font(.caption2)
-                                .padding(4)
-                                .background(.thinMaterial)
-                                .clipShape(RoundedRectangle(cornerRadius: 4))
-                        }
-                    PointMark(
-                        x: .value("Time", hoverIncoming.t),
-                        y: .value("KB/s", hoverIncoming.v)
-                    )
-                    .foregroundStyle(.green)
-                }
+            Chart(cleanIncomingSamples) { sample in
+                createSimpleLineMark(sample: sample, color: .green)
             }
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 3)) { _ in
@@ -155,24 +135,6 @@ struct NetworkDetailView: View {
             .chartYScale(domain: 0...max(getCleanIncomingMax(), 25))
             .chartXScale(domain: getTimeRange())
             .frame(height: 120)
-            .chartOverlay { proxy in
-                GeometryReader { geometry in
-                    Rectangle().fill(.clear).contentShape(Rectangle())
-                        .onContinuousHover { phase in
-                            switch phase {
-                            case .active(let location):
-                                let origin = geometry[proxy.plotAreaFrame].origin
-                                if let date: Date = proxy.value(atX: location.x - origin.x, as: Date.self) {
-                                    hoverIncoming = cleanIncomingSamples.min {
-                                        abs($0.t.timeIntervalSince(date)) < abs($1.t.timeIntervalSince(date))
-                                    }
-                                }
-                            default:
-                                hoverIncoming = nil
-                            }
-                        }
-                }
-            }
         }
         .padding()
         .glassBackground(emphasized: !state.reduceMotion)
@@ -188,26 +150,8 @@ struct NetworkDetailView: View {
                     .foregroundStyle(.red)
             }
             
-            Chart {
-                ForEach(cleanOutgoingSamples) { sample in
-                    createSimpleLineMark(sample: sample, color: .red)
-                }
-                if let hoverOutgoing {
-                    RuleMark(x: .value("Time", hoverOutgoing.t))
-                        .foregroundStyle(.secondary)
-                        .annotation(position: .top) {
-                            Text("\(hoverOutgoing.v, specifier: "%.0f") KB/s")
-                                .font(.caption2)
-                                .padding(4)
-                                .background(.thinMaterial)
-                                .clipShape(RoundedRectangle(cornerRadius: 4))
-                        }
-                    PointMark(
-                        x: .value("Time", hoverOutgoing.t),
-                        y: .value("KB/s", hoverOutgoing.v)
-                    )
-                    .foregroundStyle(.red)
-                }
+            Chart(cleanOutgoingSamples) { sample in
+                createSimpleLineMark(sample: sample, color: .red)
             }
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 3)) { _ in
@@ -229,24 +173,6 @@ struct NetworkDetailView: View {
             .chartYScale(domain: 0...max(getCleanOutgoingMax(), 25))
             .chartXScale(domain: getTimeRange())
             .frame(height: 120)
-            .chartOverlay { proxy in
-                GeometryReader { geometry in
-                    Rectangle().fill(.clear).contentShape(Rectangle())
-                        .onContinuousHover { phase in
-                            switch phase {
-                            case .active(let location):
-                                let origin = geometry[proxy.plotAreaFrame].origin
-                                if let date: Date = proxy.value(atX: location.x - origin.x, as: Date.self) {
-                                    hoverOutgoing = cleanOutgoingSamples.min {
-                                        abs($0.t.timeIntervalSince(date)) < abs($1.t.timeIntervalSince(date))
-                                    }
-                                }
-                            default:
-                                hoverOutgoing = nil
-                            }
-                        }
-                }
-            }
         }
         .padding()
         .glassBackground(emphasized: !state.reduceMotion)
