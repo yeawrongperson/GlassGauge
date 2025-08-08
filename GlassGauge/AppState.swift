@@ -43,18 +43,18 @@ final class AppState: ObservableObject {
         helperStatus = UnifiedHelperManager.shared.getHelperStatus()
         
         // Try to establish connection asynchronously
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            UnifiedHelperManager.shared.ensureHelperIsReady { [weak self] result in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+            UnifiedHelperManager.shared.ensureHelperIsReady { [weak self] (result: Result<Void, Error>) in
                 DispatchQueue.main.async {
                     switch result {
                     case .success:
                         self?.hasPrivilegedAccess = true
                         self?.helperStatus = "Connected"
                         print("✅ Privileged access available")
-                        
+
                         // Test with a simple sensor call
                         self?.testHelperConnection()
-                        
+
                     case .failure(let error):
                         self?.hasPrivilegedAccess = false
                         self?.helperStatus = "Error: \(error.localizedDescription)"
@@ -62,7 +62,7 @@ final class AppState: ObservableObject {
                     }
                 }
             }
-        }
+        })
     }
     
     private func testHelperConnection() {
@@ -70,7 +70,7 @@ final class AppState: ObservableObject {
         
         UnifiedHelperManager.shared.runPowermetrics(
             arguments: ["--samplers", "smc", "-n", "1", "-i", "100"]
-        ) { [weak self] exitCode, output in
+        ) { [weak self] (exitCode: Int32, output: String) in
             DispatchQueue.main.async {
                 if exitCode == 0 && !output.isEmpty {
                     print("✅ Helper test successful, got \(output.count) chars of sensor data")
@@ -289,7 +289,7 @@ final class AppState: ObservableObject {
             
             UnifiedHelperManager.shared.runPowermetrics(
                 arguments: ["--samplers", "smc", "-n", "1", "-i", "200"]
-            ) { exitCode, output in
+            ) { (exitCode: Int32, output: String) in
                 if exitCode == 0 && !output.isEmpty {
                     DispatchQueue.main.async {
                         self.parsePrivilegedSensorData(output)

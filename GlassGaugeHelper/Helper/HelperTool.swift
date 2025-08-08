@@ -2,7 +2,8 @@ import Foundation
 import os.log
 import Security
 
-final class ImprovedHelperTool: NSObject, GlassGaugeHelperProtocol, NSXPCListenerDelegate {
+// Primary XPC helper implementation for powermetrics access
+final class HelperTool: NSObject, GlassGaugeHelperProtocol, NSXPCListenerDelegate {
     
     private let logger = Logger(subsystem: "com.zeiglerstudios.glassgauge.helper", category: "HelperTool")
     private let listener: NSXPCListener
@@ -113,9 +114,10 @@ final class ImprovedHelperTool: NSObject, GlassGaugeHelperProtocol, NSXPCListene
     
     private func verifyConnection(_ connection: NSXPCConnection) -> Bool {
         // Create a SecCode object for the connecting process using its PID
-        var secCode: SecCode?
-        let status = SecCodeCreateWithPID(kCFAllocatorDefault, connection.processIdentifier, SecCSFlags(), &secCode)
-        guard status == errSecSuccess, let code = secCode else {
+        var code: SecCode?
+        let attributes = [kSecGuestAttributePid: connection.processIdentifier] as CFDictionary
+        let status = SecCodeCopyGuestWithAttributes(nil, attributes, SecCSFlags(), &code)
+        guard status == errSecSuccess, let code else {
             logger.error("❌ Failed to create SecCode from PID: \(status)")
             return false
         }
@@ -207,7 +209,7 @@ struct HelperMain {
         logger.info("✅ Running as root (UID: \(uid))")
         
         // Create and start the helper tool
-        let helper = ImprovedHelperTool()
+        _ = HelperTool()
         
         // Set up signal handling for graceful shutdown
         signal(SIGTERM) { _ in
