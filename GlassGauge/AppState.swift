@@ -23,9 +23,10 @@ final class AppState: ObservableObject {
     
     @Published var pinnedIDs: Set<UUID> = []
     
-    // Enhanced sensor data from blessed helper
+    // Enhanced sensor data from privileged helper
     @Published var hasPrivilegedAccess = false
     @Published var realSensorData: RealSensorData = RealSensorData()
+    @Published var helperStatus: String = "Unknown"
     
     private var timer: Timer?
     private let monitor = SystemMonitor()
@@ -35,20 +36,49 @@ final class AppState: ObservableObject {
         checkPrivilegedAccess()
     }
     
-    // In AppState.swift, update the checkPrivilegedAccess method:
     private func checkPrivilegedAccess() {
-        // Don't check during app init - do it asynchronously
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            SMBlessedHelperManager.shared.ensureBlessedAndConnect { result in
+        print("🔍 Checking privileged access...")
+        
+        // Update helper status
+        helperStatus = UnifiedHelperManager.shared.getHelperStatus()
+        
+        // Try to establish connection asynchronously
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            UnifiedHelperManager.shared.ensureHelperIsReady { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success:
-                        self.hasPrivilegedAccess = true
+                        self?.hasPrivilegedAccess = true
+                        self?.helperStatus = "Connected"
                         print("✅ Privileged access available")
-                    case .failure:
-                        self.hasPrivilegedAccess = false
-                        print("❌ No privileged access")
+                        
+                        // Test with a simple sensor call
+                        self?.testHelperConnection()
+                        
+                    case .failure(let error):
+                        self?.hasPrivilegedAccess = false
+                        self?.helperStatus = "Error: \(error.localizedDescription)"
+                        print("❌ No privileged access: \(error.localizedDescription)")
                     }
+                }
+            }
+        }
+    }
+    
+    private func testHelperConnection() {
+        print("🧪 Testing helper connection with sensor data...")
+        
+        UnifiedHelperManager.shared.runPowermetrics(
+            arguments: ["--samplers", "smc", "-n", "1", "-i", "100"]
+        ) { [weak self] exitCode, output in
+            DispatchQueue.main.async {
+                if exitCode == 0 && !output.isEmpty {
+                    print("✅ Helper test successful, got \(output.count) chars of sensor data")
+                    self?.parsePrivilegedSensorData(output)
+                } else {
+                    print("⚠️ Helper test failed: exit code \(exitCode)")
+                    // Keep privileged access flag true but note the issue
+                    self?.helperStatus = "Connected (limited data)"
                 }
             }
         }
@@ -73,8 +103,8 @@ final class AppState: ObservableObject {
     private func tick() {
         let s = monitor.sample()
         
-        // Update privileged sensor data if available
-        if hasPrivilegedAccess {
+        // Update privileged sensor data if available (every 5 seconds to avoid overload)
+        if hasPrivilegedAccess && Int(Date().timeIntervalSince1970) % 5 == 0 {
             updatePrivilegedSensorData()
         }
         
@@ -128,6 +158,11 @@ final class AppState: ObservableObject {
         let avgTemp = validTemps.isEmpty ? 0 : validTemps.reduce(0, +) / Double(validTemps.count)
         push(temps, value: avgTemp)
         
+        // Update secondary information for all metrics
+        updateMetricSecondaryInfo(s: s, cpuTemp: cpuTemp, gpuTemp: gpuTemp, diskTemp: diskTemp, avgTemp: avgTemp, validTemps: validTemps, fanRPM: fanRPM)
+    }
+    
+    private func updateMetricSecondaryInfo(s: SystemSample, cpuTemp: Double, gpuTemp: Double, diskTemp: Double, avgTemp: Double, validTemps: [Double], fanRPM: Double) {
         // Update CPU temperature and secondary info
         if cpuTemp > 0 {
             let tempLabel = hasPrivilegedAccess ? "\(Int(cpuTemp))°C" : "~\(Int(cpuTemp))°C"
@@ -248,16 +283,20 @@ final class AppState: ObservableObject {
     }
     
     private func updatePrivilegedSensorData() {
-        // Fetch real sensor data from blessed helper in background
+        // Fetch real sensor data from helper in background (throttled)
         Task.detached { [weak self] in
             guard let self = self else { return }
             
-            // Get fan speed
-            SMBlessedHelperManager.shared.runPowermetrics(arguments: ["--samplers", "smc", "-n", "1", "-i", "200"]) { exitCode, output in
+            UnifiedHelperManager.shared.runPowermetrics(
+                arguments: ["--samplers", "smc", "-n", "1", "-i", "200"]
+            ) { exitCode, output in
                 if exitCode == 0 && !output.isEmpty {
                     DispatchQueue.main.async {
                         self.parsePrivilegedSensorData(output)
                     }
+                } else {
+                    // Don't spam logs, just note that we didn't get data this time
+                    print("📊 Powermetrics call returned exit code \(exitCode)")
                 }
             }
         }
@@ -339,6 +378,22 @@ final class AppState: ObservableObject {
         case ..<85: return "elevated"
         default: return "critical"
         }
+    }
+    
+    // MARK: - Public methods for UI
+    
+    func refreshHelperConnection() {
+        print("🔄 Manually refreshing helper connection...")
+        checkPrivilegedAccess()
+    }
+    
+    func getDetailedHelperStatus() -> String {
+        return """
+        Status: \(helperStatus)
+        Privileged Access: \(hasPrivilegedAccess ? "Yes" : "No")
+        Real Fan Data: \(realSensorData.hasFanData ? "Yes" : "No")
+        Real Temp Data: \(realSensorData.hasTempData ? "Yes" : "No")
+        """
     }
 }
 

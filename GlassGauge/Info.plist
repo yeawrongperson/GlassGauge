@@ -2,10 +2,62 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- Legacy SMJobBless configuration for macOS 12 and earlier -->
     <key>SMPrivilegedExecutables</key>
     <dict>
         <key>com.zeiglerstudios.glassgauge.helper</key>
         <string>identifier "com.zeiglerstudios.glassgauge.helper" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */ and certificate leaf[subject.OU] = "5LX3RLQKZL"</string>
     </dict>
+    
+    <!-- Modern SMAppService configuration for macOS 13+ -->
+    <key>SMPrivilegedHelperDaemons</key>
+    <array>
+        <string>com.zeiglerstudios.glassgauge.helper.plist</string>
+    </array>
+    
+    <!-- App bundle information (your existing values) -->
+    <key>CFBundleIdentifier</key>
+    <string>com.zeiglerstudios.glassgauge</string>
+    
+    <key>CFBundleName</key>
+    <string>GlassGauge</string>
+    
+    <key>CFBundleDisplayName</key>
+    <string>GlassGauge</string>
+    
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    
+    <key>CFBundleExecutable</key>
+    <string>GlassGauge</string>
+    
+    <!-- App category -->
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+    
+    <!-- Minimum system version -->
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
+    
+    <!-- Copyright -->
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2025 Zeigler Studios. All rights reserved.</string>
+    
+    <!-- Privacy usage descriptions (required for hardware access) -->
+    <key>NSSystemAdministrationUsageDescription</key>
+    <string>GlassGauge needs administrator privileges to access hardware sensors for real-time monitoring of CPU temperature, fan speeds, and other system metrics.</string>
+    
+    <!-- Additional entitlements info -->
+    <key>NSSupportsAutomaticTermination</key>
+    <true/>
+    
+    <key>NSSupportsSuddenTermination</key>
+    <true/>
 </dict>
 </plist>

@@ -2,16 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- Basic bundle information -->
     <key>CFBundleIdentifier</key>
     <string>com.zeiglerstudios.glassgauge.helper</string>
+    
     <key>CFBundleName</key>
-    <string>GlassGaugeHelper</string>
+    <string>GlassGauge Helper</string>
+    
     <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
+    <string>com.zeiglerstudios.glassgauge.helper</string>
+    
     <key>CFBundleVersion</key>
     <string>1.0</string>
+    
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
+    
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     
@@ -19,17 +25,36 @@
     <key>LSUIElement</key>
     <true/>
     
-    <!-- This is the Mach service name that XPC will use -->
+    <key>LSBackgroundOnly</key>
+    <true/>
+    
+    <!-- XPC service configuration for SMJobBless compatibility -->
     <key>MachServices</key>
     <dict>
         <key>com.zeiglerstudios.glassgauge.helper</key>
         <true/>
     </dict>
     
-    <!-- Only allow your main app to connect -->
+    <!-- Security: Only allow the main app to connect -->
     <key>SMAuthorizedClients</key>
     <array>
         <string>identifier "com.zeiglerstudios.glassgauge" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */ and certificate leaf[subject.OU] = "5LX3RLQKZL"</string>
     </array>
+    
+    <!-- Minimum OS version -->
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
+    
+    <!-- Logging configuration -->
+    <key>OSLogPreferences</key>
+    <dict>
+        <key>com.zeiglerstudios.glassgauge.helper</key>
+        <dict>
+            <key>Level</key>
+            <string>Info</string>
+            <key>Persist</key>
+            <true/>
+        </dict>
+    </dict>
 </dict>
 </plist>

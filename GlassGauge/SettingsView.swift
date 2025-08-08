@@ -6,9 +6,10 @@ struct SettingsView: View {
     @State private var launchAtLogin = false
     @State private var profile: SamplingProfile = .balanced
 
-    // UI state for the bless/connect action
+    // UI state for the helper management
     @State private var isEnabling = false
-    @State private var blessStatus: String?
+    @State private var statusMessage: String?
+    @State private var showingDetailedStatus = false
 
     var body: some View {
         Form {
@@ -28,51 +29,81 @@ struct SettingsView: View {
                 }
             }
 
-            // MARK: Sensor Access
-            Section("Sensor Access") {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Enhanced Sensor Access")
-                            .fontWeight(.medium)
-                        Text(state.hasPrivilegedAccess
-                             ? "Real sensor data available"
-                             : "Using estimated values")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+            // MARK: Enhanced Sensor Access
+            Section("Enhanced Sensor Access") {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Hardware Sensor Access")
+                                .fontWeight(.medium)
+                            Text(state.hasPrivilegedAccess
+                                 ? "Real hardware sensor data available"
+                                 : "Using estimated values")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: state.hasPrivilegedAccess
+                              ? "checkmark.circle.fill"
+                              : "exclamationmark.circle.fill")
+                            .foregroundColor(state.hasPrivilegedAccess ? .green : .orange)
                     }
-
-                    Spacer()
-
-                    Image(systemName: state.hasPrivilegedAccess
-                          ? "checkmark.circle.fill"
-                          : "exclamationmark.circle.fill")
-                        .foregroundColor(state.hasPrivilegedAccess ? .green : .orange)
+                    
+                    // Helper Status
+                    HStack {
+                        Text("Status:")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(state.helperStatus)
+                            .font(.caption)
+                            .fontFamily(.monospaced)
+                        
+                        Spacer()
+                        
+                        Button("Details") {
+                            showingDetailedStatus.toggle()
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                    }
+                    
+                    if showingDetailedStatus {
+                        Text(state.getDetailedHelperStatus())
+                            .font(.caption)
+                            .fontFamily(.monospaced)
+                            .padding(8)
+                            .background(Color.secondary.opacity(0.1))
+                            .cornerRadius(6)
+                    }
                 }
 
                 if !state.hasPrivilegedAccess {
                     Button {
                         enableEnhancedAccess()
                     } label: {
-                        if isEnabling {
-                            ProgressView()
-                                .controlSize(.small)
-                                .padding(.horizontal, 6)
-                            Text("Enabling…")
-                        } else {
-                            Text("Enable Enhanced Access")
+                        HStack {
+                            if isEnabling {
+                                ProgressView()
+                                    .controlSize(.small)
+                                    .padding(.trailing, 4)
+                            }
+                            Text(isEnabling ? "Setting up..." : "Enable Enhanced Access")
                         }
                     }
                     .disabled(isEnabling)
                     .buttonStyle(.borderedProminent)
 
-                    if let blessStatus {
-                        Text(blessStatus)
+                    if let statusMessage {
+                        Text(statusMessage)
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                            .padding(.top, 4)
                     }
                 } else {
-                    // Show current access status
-                    VStack(alignment: .leading, spacing: 4) {
+                    // Show current access status and controls
+                    VStack(alignment: .leading, spacing: 6) {
                         if state.realSensorData.hasFanData {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
@@ -93,203 +124,287 @@ struct SettingsView: View {
                             }
                         }
                         
-                        Button("Reconnect Helper") {
-                            enableEnhancedAccess()
+                        HStack {
+                            Button("Refresh Connection") {
+                                refreshHelperConnection()
+                            }
+                            .disabled(isEnabling)
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            
+                            if #available(macOS 13.0, *) {
+                                Button("Unregister Helper") {
+                                    unregisterHelper()
+                                }
+                                .disabled(isEnabling)
+                                .buttonStyle(.bordered)
+                                .controlSize(.small)
+                            }
                         }
-                        .disabled(isEnabling)
-                        .buttonStyle(.bordered)
-                        .font(.caption)
                     }
                 }
 
-                Text("Enhanced access provides real fan speeds and temperatures instead of estimates. Requires administrator privileges to install a secure helper tool.")
+                Text("Enhanced access provides real fan speeds and temperatures instead of estimates. Requires administrator privileges to install a secure helper daemon.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
 
-            // MARK: Data Quality
+            // MARK: Data Quality Status
             Section("Data Quality") {
-                HStack {
-                    Text("Fan Data:")
-                    Spacer()
-                    Text(state.realSensorData.hasFanData ? "Real RPM" : "Estimated")
-                        .foregroundColor(state.realSensorData.hasFanData ? .green : .orange)
+                VStack(alignment: .leading, spacing: 8) {
+                    DataQualityRow(label: "Fan Data", hasRealData: state.realSensorData.hasFanData)
+                    DataQualityRow(label: "Temperature Data", hasRealData: state.realSensorData.hasTempData)
+                    DataQualityRow(label: "Power Data", hasRealData: true) // Always available
+                    DataQualityRow(label: "Network Data", hasRealData: true) // Always available
+                    DataQualityRow(label: "Memory Data", hasRealData: true) // Always available
                 }
+            }
 
+            // MARK: macOS Version Info
+            Section("System Information") {
                 HStack {
-                    Text("Temperature Data:")
+                    Text("macOS Version:")
                     Spacer()
-                    Text(state.realSensorData.hasTempData ? "Real Sensors" : "Estimated")
-                        .foregroundColor(state.realSensorData.hasTempData ? .green : .orange)
+                    Text(getmacOSVersion())
+                        .fontFamily(.monospaced)
                 }
-
+                
                 HStack {
-                    Text("Power Data:")
+                    Text("Helper API:")
                     Spacer()
-                    Text("Real Values")
-                        .foregroundColor(.green)
+                    Text(getHelperAPIType())
+                        .fontFamily(.monospaced)
+                }
+                
+                HStack {
+                    Text("Architecture:")
+                    Spacer()
+                    Text(getArchitecture())
+                        .fontFamily(.monospaced)
                 }
             }
 
             // MARK: Debug & Diagnostics
             Section("Debug & Diagnostics") {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("If Enhanced Access isn't working, run these diagnostics:")
+                    Text("If Enhanced Access isn't working properly:")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     HStack {
-                        Button("🔍 Quick Diagnostics") {
-                            SMJobBlessDiagnostics.runQuickDiagnostics()
+                        Button("🔍 Test Connection") {
+                            testHelperConnection()
                         }
                         .buttonStyle(.bordered)
+                        .controlSize(.small)
                         
-                        Button("🔍 Full Diagnostics") {
-                            SMJobBlessDiagnostics.runCompleteDiagnostics()
+                        Button("📋 Check Logs") {
+                            checkLogs()
                         }
                         .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        
+                        Button("⚙️ Open System Settings") {
+                            openSystemSettings()
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
                     }
                     
-                    Button("📋 Check Console Logs") {
-                        checkConsoleLogs()
-                    }
-                    .buttonStyle(.bordered)
-                    
-                    Text("Check the Xcode console output for detailed diagnostic information.")
+                    Text("Check the Console app for logs from 'GlassGauge' and 'com.zeiglerstudios.glassgauge.helper'")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
         }
         .padding(20)
-        .frame(width: 600) // Made wider to accommodate new debug section
+        .frame(width: 650)
     }
 
-    // IMMEDIATE FIX: Replace your SettingsView enableEnhancedAccess method with this:
+    // MARK: - Helper Management Functions
 
     private func enableEnhancedAccess() {
-        guard !isEnabling else {
-            blessStatus = "Installation already in progress..."
-            return
-        }
+        guard !isEnabling else { return }
         
         isEnabling = true
-        blessStatus = "Requesting administrator privileges..."
+        statusMessage = "Requesting administrator privileges..."
         
-        // First, run comprehensive diagnostics
-        print("🔧 Running comprehensive diagnostics...")
-        SMJobBlessDiagnostics.runUltimateDebug()
+        print("🔧 Starting enhanced access setup...")
         
-        // Try the enhanced authorization approach
-        var authRef: AuthorizationRef?
-        let authStatus = AuthorizationCreate(nil, nil, [], &authRef)
-        
-        guard authStatus == errAuthorizationSuccess, let auth = authRef else {
-            isEnabling = false
-            blessStatus = "Failed to create authorization"
-            return
-        }
-        
-        defer { AuthorizationFree(auth, []) }
-        
-        // Try to prompt for admin rights explicitly
-        let rightName = "system.privilege.admin"
-        let rightData = rightName.data(using: .utf8)!
-        
-        let authResult = rightData.withUnsafeBytes { rightBytes in
-            let rightPtr = rightBytes.bindMemory(to: CChar.self).baseAddress!
-            
-            var authItem = AuthorizationItem(
-                name: rightPtr,
-                valueLength: 0,
-                value: nil,
-                flags: 0
-            )
-            
-            return withUnsafeMutablePointer(to: &authItem) { authItemPtr in
-                var authRights = AuthorizationRights(count: 1, items: authItemPtr)
-                
-                // This should trigger the admin password prompt
-                let result = AuthorizationCopyRights(
-                    auth,
-                    &authRights,
-                    nil,
-                    [.interactionAllowed, .extendRights],
-                    nil
-                )
-                
-                print("🔐 Authorization result: \(result)")
-                return result == errAuthorizationSuccess
-            }
-        }
-        
-        if !authResult {
-            isEnabling = false
-            blessStatus = "Administrator privileges denied. Please try again and enter your password when prompted."
-            return
-        }
-        
-        blessStatus = "Installing helper tool..."
-        
-        // Now try the actual blessing
-        SMBlessedHelperManager.shared.ensureBlessedAndConnect { result in
+        UnifiedHelperManager.shared.ensureHelperIsReady { [self] result in
             DispatchQueue.main.async {
                 self.isEnabling = false
                 
                 switch result {
                 case .success:
                     self.state.hasPrivilegedAccess = true
-                    self.blessStatus = "Helper installed successfully!"
+                    self.statusMessage = "✅ Enhanced access enabled successfully!"
+                    print("✅ Enhanced access setup complete")
+                    
+                    // Refresh the app state
+                    self.state.refreshHelperConnection()
+                    
+                    // Clear status message after a delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        self.statusMessage = nil
+                    }
                     
                 case .failure(let error):
                     self.state.hasPrivilegedAccess = false
-                    self.blessStatus = "Installation failed: \(error.localizedDescription)"
-                    print("❌ Final error: \(error)")
+                    self.statusMessage = "❌ Setup failed: \(error.localizedDescription)"
+                    print("❌ Enhanced access setup failed: \(error)")
+                    
+                    // Provide specific guidance based on error type
+                    if let unifiedError = error as? UnifiedHelperManager.HelperError {
+                        switch unifiedError {
+                        case .authorizationFailed:
+                            self.statusMessage = "❌ Administrator privileges required. Please try again and enter your password when prompted."
+                        case .connectionFailed:
+                            self.statusMessage = "❌ Helper installed but connection failed. Try refreshing or restarting the app."
+                        case .installationFailed:
+                            self.statusMessage = "❌ Installation failed. Check System Settings > General > Login Items & Extensions"
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func refreshHelperConnection() {
+        isEnabling = true
+        statusMessage = "Refreshing connection..."
+        
+        state.refreshHelperConnection()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.isEnabling = false
+            self.statusMessage = state.hasPrivilegedAccess ? "✅ Connection refreshed" : "❌ Connection failed"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.statusMessage = nil
+            }
+        }
+    }
+    
+    @available(macOS 13.0, *)
+    private func unregisterHelper() {
+        isEnabling = true
+        statusMessage = "Unregistering helper..."
+        
+        UnifiedHelperManager.shared.unregisterHelper { result in
+            DispatchQueue.main.async {
+                self.isEnabling = false
+                
+                switch result {
+                case .success:
+                    self.state.hasPrivilegedAccess = false
+                    self.statusMessage = "✅ Helper unregistered successfully"
+                case .failure(let error):
+                    self.statusMessage = "❌ Unregistration failed: \(error.localizedDescription)"
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    self.statusMessage = nil
                 }
             }
         }
     }
     
     private func testHelperConnection() {
-        SMBlessedHelperManager.shared.runPowermetrics(arguments: ["--samplers", "smc", "-n", "1", "-i", "100"]) { exitCode, output in
+        statusMessage = "Testing helper connection..."
+        
+        UnifiedHelperManager.shared.runPowermetrics(arguments: ["--help"]) { exitCode, output in
             DispatchQueue.main.async {
                 if exitCode == 0 {
-                    self.blessStatus = "Helper working! Output: \(output.prefix(100))..."
-                    print("✅ Helper test successful. Output preview: \(output.prefix(200))")
+                    self.statusMessage = "✅ Helper connection test successful"
                 } else {
-                    self.blessStatus = "Helper connection failed (exit code: \(exitCode))"
-                    print("❌ Helper test failed with exit code: \(exitCode)")
+                    self.statusMessage = "❌ Helper connection test failed (exit code: \(exitCode))"
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    self.statusMessage = nil
                 }
             }
         }
     }
     
-    private func checkConsoleLogs() {
+    private func checkLogs() {
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/log")
-        let helperExecutable = SMBlessedHelperManager.helperExecutableName
-        process.arguments = ["show", "--predicate", "subsystem == '\(helperExecutable)'", "--last", "5m"]
-        
-        let pipe = Pipe()
-        process.standardOutput = pipe
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        process.arguments = ["/Applications/Utilities/Console.app"]
         
         do {
             try process.run()
-            process.waitUntilExit()
+            statusMessage = "Console app opened - search for 'GlassGauge' or 'glassgauge.helper'"
             
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                print("=== Helper Console Logs (Last 5 minutes) ===")
-                print(output)
-                print("==========================================")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                self.statusMessage = nil
             }
         } catch {
-            print("Failed to read console logs: \(error)")
+            statusMessage = "Failed to open Console app"
+        }
+    }
+    
+    private func openSystemSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension") {
+            NSWorkspace.shared.open(url)
+            statusMessage = "System Settings opened - check Login Items & Extensions"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                self.statusMessage = nil
+            }
+        }
+    }
+    
+    // MARK: - System Information
+    
+    private func getmacOSVersion() -> String {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+    }
+    
+    private func getHelperAPIType() -> String {
+        if #available(macOS 13.0, *) {
+            return "SMAppService (Modern)"
+        } else {
+            return "SMJobBless (Legacy)"
+        }
+    }
+    
+    private func getArchitecture() -> String {
+        #if arch(arm64)
+        return "Apple Silicon (ARM64)"
+        #else
+        return "Intel (x86_64)"
+        #endif
+    }
+}
+
+// MARK: - Helper Views
+
+struct DataQualityRow: View {
+    let label: String
+    let hasRealData: Bool
+    
+    var body: some View {
+        HStack {
+            Text("\(label):")
+            Spacer()
+            HStack {
+                Image(systemName: hasRealData ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                    .foregroundColor(hasRealData ? .green : .orange)
+                    .font(.caption)
+                Text(hasRealData ? "Real Values" : "Estimated")
+                    .font(.caption)
+                    .foregroundColor(hasRealData ? .green : .orange)
+            }
         }
     }
 }
 
-// Keep your existing enum so other files compile unchanged
+// Keep the existing enum for compatibility
 enum SamplingProfile: String, CaseIterable, Identifiable {
     case eco, balanced, performance
     var id: String { rawValue }

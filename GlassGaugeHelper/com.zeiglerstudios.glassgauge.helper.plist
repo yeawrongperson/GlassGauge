@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Bundle identifier must match the helper bundle -->
+    <key>Label</key>
+    <string>com.zeiglerstudios.glassgauge.helper</string>
+    
+    <!-- Path to the helper executable -->
+    <key>Program</key>
+    <string>/Library/PrivilegedHelperTools/com.zeiglerstudios.glassgauge.helper</string>
+    
+    <!-- Run as root to access hardware sensors -->
+    <key>UserName</key>
+    <string>root</string>
+    
+    <!-- Mach service for XPC communication -->
+    <key>MachServices</key>
+    <dict>
+        <key>com.zeiglerstudios.glassgauge.helper</key>
+        <true/>
+    </dict>
+    
+    <!-- Security settings -->
+    <key>AssociatedBundleIdentifiers</key>
+    <array>
+        <string>com.zeiglerstudios.glassgauge</string>
+    </array>
+    
+    <!-- Launch on demand -->
+    <key>LaunchOnlyOnce</key>
+    <false/>
+    
+    <!-- Keep alive settings -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    
+    <!-- Timeout settings -->
+    <key>TimeOut</key>
+    <integer>30</integer>
+    
+    <!-- Standard streams -->
+    <key>StandardOutPath</key>
+    <string>/var/log/glassgauge-helper.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/glassgauge-helper.log</string>
+</dict>
+</plist>
