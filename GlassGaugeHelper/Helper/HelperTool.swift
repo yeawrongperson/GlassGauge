@@ -1,5 +1,6 @@
 import Foundation
 import os.log
+import Security
 
 final class ImprovedHelperTool: NSObject, GlassGaugeHelperProtocol, NSXPCListenerDelegate {
     
@@ -111,30 +112,26 @@ final class ImprovedHelperTool: NSObject, GlassGaugeHelperProtocol, NSXPCListene
     // MARK: - Security and Validation
     
     private func verifyConnection(_ connection: NSXPCConnection) -> Bool {
-        // Get the audit token for the connecting process
-        var auditToken = audit_token_t()
-        connection.auditToken = auditToken
-        
-        // Verify the code signature of the connecting process
-        var code: SecCode?
-        let status = SecCodeCreateWithAuditToken(auditToken, [], &code)
-        guard status == errSecSuccess, let secCode = code else {
-            logger.error("❌ Failed to create SecCode from audit token")
+        // Create a SecCode object for the connecting process using its PID
+        var secCode: SecCode?
+        let status = SecCodeCreateWithPID(kCFAllocatorDefault, connection.processIdentifier, SecCSFlags(), &secCode)
+        guard status == errSecSuccess, let code = secCode else {
+            logger.error("❌ Failed to create SecCode from PID: \(status)")
             return false
         }
-        
-        // Check the code signature requirement
-        let requirement = "identifier \"com.zeiglerstudios.glassgauge\" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */ and certificate leaf[subject.OU] = \"5LX3RLQKZL\""
-        
+
+        // Requirement for the main GlassGauge application
+        let requirementString = "identifier \"com.zeiglerstudios.glassgauge\" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */ and certificate leaf[subject.OU] = \"5LX3RLQKZL\""
+
         var secRequirement: SecRequirement?
-        let reqStatus = SecRequirementCreateWithString(requirement as CFString, [], &secRequirement)
+        let reqStatus = SecRequirementCreateWithString(requirementString as CFString, SecCSFlags(), &secRequirement)
         guard reqStatus == errSecSuccess, let requirement = secRequirement else {
             logger.error("❌ Failed to create security requirement")
             return false
         }
-        
-        // Verify the code meets the requirement
-        let verifyStatus = SecCodeCheckValidity(secCode, [], requirement)
+
+        // Ensure the connecting process satisfies our code signing requirement
+        let verifyStatus = SecCodeCheckValidity(code, SecCSFlags(), requirement)
         if verifyStatus == errSecSuccess {
             logger.info("✅ Connection verified: authorized GlassGauge app")
             return true
