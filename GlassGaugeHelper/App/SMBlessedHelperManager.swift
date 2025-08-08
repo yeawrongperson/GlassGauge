@@ -264,31 +264,33 @@ class SMBlessedHelperManager {
         
         return rightNameData.withUnsafeBytes { rightNameBytes in
             let rightNamePtr = rightNameBytes.bindMemory(to: CChar.self).baseAddress!
-            
+
             var authItem = AuthorizationItem(
                 name: rightNamePtr,
                 valueLength: 0,
                 value: nil,
                 flags: 0
             )
-            
-            var authRights = AuthorizationRights(count: 1, items: &authItem)
-            
-            let rightStatus = AuthorizationCopyRights(
-                auth,
-                &authRights,
-                nil,
-                [.interactionAllowed, .preAuthorize, .extendRights],
-                nil
-            )
-            
-            guard rightStatus == errAuthorizationSuccess else {
-                logger.error("❌ Failed to obtain administrative rights: \(rightStatus)")
-                AuthorizationFree(auth, [])
-                return .failure(.authorizationFailed)
+
+            return withUnsafeMutablePointer(to: &authItem) { authItemPtr in
+                var authRights = AuthorizationRights(count: 1, items: authItemPtr)
+
+                let rightStatus = AuthorizationCopyRights(
+                    auth,
+                    &authRights,
+                    nil,
+                    [.interactionAllowed, .preAuthorize, .extendRights],
+                    nil
+                )
+
+                guard rightStatus == errAuthorizationSuccess else {
+                    logger.error("❌ Failed to obtain administrative rights: \(rightStatus)")
+                    AuthorizationFree(auth, [])
+                    return .failure(.authorizationFailed)
+                }
+
+                return .success(auth)
             }
-            
-            return .success(auth)
         }
     }
     
@@ -305,7 +307,16 @@ class SMBlessedHelperManager {
             return
         }
         
-        // Perform the blessing - SMJobBless is deprecated in macOS 13+ but still functional
+        // Perform the blessing - SMJobBless is deprecated in macOS 13+
+        if #available(macOS 13.0, *) {
+            logger.error("❌ SMJobBless is unavailable on macOS 13 and later")
+            let error = NSError(domain: "SMJobBless", code: -1, userInfo: [NSLocalizedDescriptionKey: "SMJobBless is deprecated on macOS 13+"])
+            DispatchQueue.main.async {
+                completion(.failure(HelperError.blessingFailed(error)))
+            }
+            return
+        }
+
         var cfError: Unmanaged<CFError>?
         let success = SMJobBless(
             kSMDomainSystemLaunchd,
@@ -313,7 +324,7 @@ class SMBlessedHelperManager {
             auth,
             &cfError
         )
-        
+
         DispatchQueue.main.async {
             if success {
                 self.logger.info("✅ SMJobBless succeeded")
@@ -323,11 +334,11 @@ class SMBlessedHelperManager {
                 let domain = error.map { CFErrorGetDomain($0) as String } ?? "Unknown"
                 let code = error.map { CFErrorGetCode($0) } ?? -1
                 let description = error.flatMap { CFErrorCopyDescription($0) as String? } ?? "Unknown error"
-                
+
                 self.logger.error("❌ SMJobBless failed with CFError: \(description)")
                 self.logger.error("   Error domain: \(domain)")
                 self.logger.error("   Error code: \(code)")
-                
+
                 // Provide specific guidance based on error code
                 switch code {
                 case 2:
@@ -348,7 +359,7 @@ class SMBlessedHelperManager {
                 default:
                     self.logger.error("   📝 Unknown error code")
                 }
-                
+
                 // Create proper NSError from CFError
                 let nsError = self.createNSError(from: error, code: code, description: description)
                 let wrappedError = HelperError.blessingFailed(nsError)
